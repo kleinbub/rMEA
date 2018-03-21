@@ -2,9 +2,7 @@
 title: "rMEA TODO"
 author: "Johann R. Kleinbub"
 creation date: "3/21/2018"
-output: 
-  html_document: 
-    keep_md: yes
+output: github_document
 ---
 
 ```{r setup, include=FALSE}

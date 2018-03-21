@@ -1,19 +1,8 @@
----
-title: "rMEA TODO"
-author: "Johann R. Kleinbub"
-creation date: "3/21/2018"
-output: 
-  html_document: 
-    keep_md: yes
----
+rMEA TODO
+================
+Johann R. Kleinbub
 
+1.0.0.9010
+----------
 
-
-## 1.0.0.9010
-_date: "3/21/2018"_
-* Identify outliers in MEAlagplot()
-* 'GET' functions, e.g. getCCF, getMEA
-* add a $rand object to _MEA_ class
-* all functions accepting _MEAlist_ objects should accept a list instead and try to parse as _MEAlist_ internally
-* Calculate % of simultaneous zeroes (when zeros are during at least 5s)
-* Implement peak picking algorithms
+*date: "3/21/2018"* \* Identify outliers in MEAlagplot() \* 'GET' functions, e.g. getCCF, getMEA \* add a $rand object to *MEA* class \* all functions accepting *MEAlist* objects should accept a list instead and try to parse as *MEAlist* internally \* Calculate % of simultaneous zeroes (when zeros are during at least 5s) \* Implement peak picking algorithms
