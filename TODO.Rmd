@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1.0.0.9010
 _date: "3/21/2018"_
+
 * Identify outliers in MEAlagplot()
 * 'GET' functions, e.g. getCCF, getMEA
 * add a $rand object to _MEA_ class
