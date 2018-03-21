@@ -1,0 +1,14 @@
+Package: rMEA
+Type: Package
+Title: Synchrony in Motion Energy Analysis (MEA) Time-Series
+Version: 1.0.0.9010
+Date: 2018-03-14
+Author: Johann R. Kleinbub, Fabian Ramseyer
+Maintainer: Johann R. Kleinbub <johann.kleinbub@gmail.com>
+Description: A suite of tools useful to read, visualize and export bivariate motion energy time-series. Lagged synchrony between subjects can be analyzed through windowed cross-correlation. Surrogate data generation allows an estimation of pseudosynchrony that helps to estimate the effect size of the observed synchronization. Ramseyer & Tschacher (2011) <doi:10.1037/a0023419>.
+URL: http://www.psync.ch
+Imports: grDevices, graphics, methods, stats, utils
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1

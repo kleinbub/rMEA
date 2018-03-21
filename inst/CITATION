@@ -1,0 +1,11 @@
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "Manual",
+         title = "{rMEA} Synchrony in Motion Energy Analysis (MEA) Time-Series",
+         author = c(person("Johann", "Kleinbub", "Roland"),
+                    person("Fabian", "Ramseyer")
+                    ),
+         year = year,
+         note = note,
+         url = "https://CRAN.R-project.org/package=rMEA")

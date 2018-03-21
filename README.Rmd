@@ -1,0 +1,78 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "tools/readme/README-"
+)
+```
+
+# rMEA
+
+The goal of rMEA is to provide a suite of tools useful to read, visualize and export bivariate Motion Energy time-series. Lagged synchrony between subjects can be analyzed through windowed cross-correlation. Surrogate data generation allows an estimation of pseudosynchrony that helps to estimate the effect size of the observed synchronization.
+
+## Example
+
+This example shows a complete analysis pipeline consisting on Motion Energy time-series import, pre-processing, cross-correlation analysis and comparison between groups against pseudosynchrony.
+
+```{r example}
+library(rMEA)
+
+## read the first sample (intake interviews of patients that carried on therapy)
+path_normal <- system.file("extdata/normal", package = "rMEA")
+mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
+                     s1Name = "Patient", s2Name = "Therapist", skip=1,
+                     idOrder = c("id","session"), idSep="_")
+mea_normal <- setGroup(mea_normal, "normal")
+
+## read the second sample (intake interviews of patients that dropped out)
+path_dropout <- system.file("extdata/dropout", package = "rMEA")
+mea_dropout <- readMEA(path_dropout, sampRate = 25, s1Col = 1, s2Col = 2,
+                     s1Name = "Patient", s2Name = "Therapist", skip=1,
+                     idOrder = c("id","session"), idSep="_")
+mea_dropout <- setGroup(mea_dropout, "dropout")
+
+## Combine into a single object
+mea_all <- c(mea_normal, mea_dropout)
+
+summary(mea_all)
+
+## Show diagnostics for the first session:
+diagnosticPlot(mea_all[[1]])
+plot(mea_all[[1]], from=3500, to=5500)
+
+## Filter the data
+mea_smoothed <- MEAsmooth(mea_all)
+mea_rescaled <- MEAscale(mea_smoothed)
+
+## Generate a random sample
+mea_random <- shuffle(mea_rescaled, 50)
+
+## Run CCF analysis
+mea_ccf <- MEAccf(mea_rescaled, lagSec= 5, winSec = 30, incSec=10, ABS = F)
+mea_random_ccf <- MEAccf(mea_random, lagSec= 5, winSec = 30, incSec=10, ABS = F)
+
+## Visualize results
+
+# Raw data of the first session with running lag-0 ccf
+plot(mea_ccf[[1]], from=3500, to=5500, ccf = "zero")
+
+# Heatmap of the first session
+MEAheatmap(mea_ccf[[1]])
+
+# Distribution of the ccf calculations by group, against random matched dyads
+MEAdistplot(mea_ccf, contrast = mea_random_ccf)
+
+# Representation of the average cross-correlations by lag
+MEAlagplot(mea_ccf, contrast=mea_random_ccf)
+
+
+
+```
