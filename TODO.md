@@ -13,3 +13,4 @@ Johann R. Kleinbub
 -   all functions accepting *MEAlist* objects should accept a list instead and try to parse as *MEAlist* internally
 -   Calculate % of simultaneous zeroes (when zeros are during at least 5s)
 -   Implement peak picking algorithms
+-   clean code: debug comments, italian comments, old commented code

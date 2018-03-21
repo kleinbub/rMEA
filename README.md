@@ -21,6 +21,10 @@ mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
 #> STEP 1 | Reading 10 dyads
 #> ..................................................|100%
 #> ..................................................|Done ;)
+#> 
+#> STEP 2 | Formatting data frames:
+#> ..................................................|100%
+#> ..................................................|Done ;)
 #> Warning: 0.07% of the data was higher than 10 standard deviations in dyad:
 #> 200, session: 1, group:all. Check the raw data!
 #> Warning: 0.03% of the data was higher than 10 standard deviations in dyad:
@@ -36,7 +40,7 @@ mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
 #> Warning: 0.01% of the data was higher than 10 standard deviations in dyad:
 #> 208, session: 1, group:all. Check the raw data!
 #> 
-#> STEP 2 | ReadMEA report
+#> STEP 3 | ReadMEA report
 #>      Filename id_dyad session group duration_hh.mm.ss Patient_%
 #> 1  200_01.txt     200       1   all          00:10:00      50.1
 #> 2  201_01.txt     201       1   all          00:10:00      50.2
@@ -70,6 +74,10 @@ mea_dropout <- readMEA(path_dropout, sampRate = 25, s1Col = 1, s2Col = 2,
 #> STEP 1 | Reading 10 dyads
 #> ..................................................|100%
 #> ..................................................|Done ;)
+#> 
+#> STEP 2 | Formatting data frames:
+#> ..................................................|100%
+#> ..................................................|Done ;)
 #> Warning: 0.03% of the data was higher than 10 standard deviations in dyad:
 #> 100, session: 1, group:all. Check the raw data!
 #> Warning: 0.01% of the data was higher than 10 standard deviations in dyad:
@@ -81,7 +89,7 @@ mea_dropout <- readMEA(path_dropout, sampRate = 25, s1Col = 1, s2Col = 2,
 #> Warning: 0.1% of the data was higher than 10 standard deviations in dyad:
 #> 106, session: 1, group:all. Check the raw data!
 #> 
-#> STEP 2 | ReadMEA report
+#> STEP 3 | ReadMEA report
 #>      Filename id_dyad session group duration_hh.mm.ss Patient_%
 #> 1  100_01.txt     100       1   all          00:10:00      85.0
 #> 2  101_01.txt     101       1   all          00:10:00      84.2
@@ -186,7 +194,7 @@ mea_random_ccf <- MEAccf(mea_random, lagSec= 5, winSec = 30, incSec=10, ABS = F)
 ## Visualize results
 
 # Raw data of the first session with running lag-0 ccf
-plot(mea_ccf[[1]], from=3500, to=5500, ccf = "zero")
+plot(mea_ccf[[1]], from=3500, to=5500, ccf = "lag_zero")
 ```
 
 ![](tools/readme/README-example-3.png)

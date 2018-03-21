@@ -18,3 +18,4 @@ _date: "3/21/2018"_
 * all functions accepting _MEAlist_ objects should accept a list instead and try to parse as _MEAlist_ internally
 * Calculate % of simultaneous zeroes (when zeros are during at least 5s)
 * Implement peak picking algorithms
+* clean code: debug comments, italian comments, old commented code
