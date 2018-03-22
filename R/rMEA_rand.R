@@ -67,7 +67,7 @@ shuffle = function(mea, size) {
 
   res = lapply(1:n_boot, function(i){
     prog(i,n_boot)
-    res = stats::na.omit(unequalCbind(ll[[com[i,1]]], ll[[com[i,2]]]))
+    res = stats::na.omit(unequalCbind(ll[[com[i,1]]], ll[[com[i,2]]], keep=FALSE))
     colnames(res) = c(attr(mea,"s1Name"),attr(mea,"s2Name"))
     MEA(res, sampRate=attr(mea,"sampRate"), id=lead0(i,4),
         session="1", group="random", s1Name="s1Random", s2Name="s2Random",

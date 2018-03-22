@@ -2,6 +2,7 @@
 ### v1.0.0.9011
 
 * fixed a bug in plot.MEA when interpolation results in NA vals
+* updated documentation in readMEA
 
 ### v1.0.0.9010
 * more informative error messages

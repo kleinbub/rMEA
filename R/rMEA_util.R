@@ -13,7 +13,8 @@ cohens_d <- function(x, y) {
 
 
 ## binds unequal columns to a same data.frame padding NAs to the end of the shorter
-unequalCbind = function(...) {
+## (if keep=T, else drops the unmatched rows from the longer)
+unequalCbind = function(..., keep=TRUE) {
   dots <- list(...)
   #debug
   #dots = list(my.orig,my.ccf)
@@ -24,7 +25,10 @@ unequalCbind = function(...) {
     if(is.null(dim(x))) {
       k = data.frame(x)
       colnames(k)=paste0("x",i)
-    } else k = x
+    } else {
+      k = x
+      colnames(k)=ifelse(is.null(colnames(x)),paste0("x",i),colnames(x))
+      }
     k
     },dots, seq_along(dots))
 
@@ -32,19 +36,26 @@ unequalCbind = function(...) {
   if(length(dots)>1){
     dotsNames = unlist(sapply(dots,colnames))
     #print(dotsNames)
-    maxlen = max(sapply(dots, nrow))
-    fdots = lapply(dots, function(x){
-      #deb
-      #x= dots[[2]]
-      #rm(x,y,fdots,dots,pad,maxlen)
-      if(nrow(x)<maxlen){
-        pad = maxlen - nrow(x)
-        y = data.frame(matrix(rep(NA,ncol(x)*pad),ncol = ncol(x)))
-        colnames(y) = colnames(x)
-        rownames(y) = paste0("NA",1:pad)
-        rbind(x,y)
-      } else x
-    })
+    if(keep){
+      maxlen = max(sapply(dots, nrow))
+      fdots = lapply(dots, function(x){
+        #deb
+        #x= dots[[2]]
+        #rm(x,y,fdots,dots,pad,maxlen)
+        if(nrow(x)<maxlen){
+          pad = maxlen - nrow(x)
+          y = data.frame(matrix(rep(NA,ncol(x)*pad),ncol = ncol(x)))
+          colnames(y) = colnames(x)
+          rownames(y) = paste0("NA",1:pad)
+          rbind(x,y)
+        } else x
+      })
+    } else {
+      minlen = min(sapply(dots, nrow))
+      fdots = lapply(dots, function(x){
+        x[1:minlen,]
+      })
+    }
     res = data.frame(do.call("cbind",fdots))
     colnames(res) = dotsNames
     #print(colnames(res))

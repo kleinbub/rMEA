@@ -476,7 +476,7 @@ plot.MEA = function(x,from=1,to=nrow(mea$MEA), ccf=F, rescale =F,... ){
     if(!ccf %in% names(mea$ccfRes)) stop("'ccf value not recognized. It should be one of ",paste(names(mea$ccfRes),collapse = ", " ),call.=F)
     ccf_lab = ccf
     ccf = list(data.frame(x$ccfRes[[ccf]]))
-    if(any(ccf[[1]] < 0)) ABS = F else ABS = T
+    if(any(stats::na.omit(ccf[[1]]) < 0)) ABS = F else ABS = T
     ccf = unlist(winInter(ccf, winSec = attr(x,"ccf")$win, incSec =attr(x,"ccf")$inc, sampRate = attr(x,"sampRate")))
     ccf = ccf[all]
 
