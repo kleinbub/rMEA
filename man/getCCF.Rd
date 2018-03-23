@@ -10,7 +10,7 @@ getCCF(mea, type)
 \item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
 \item{type}{A character vector defining which ccf must be extracted.
-One of "matrix", "all_lags",  "s1_lead",   "s2_lead",   "lag_zero",  "s1_lead_0", "s2_lead_0", "grandAver",
+Either "matrix", one of the ccfRes indexes identified with \code{\link{ccfResNames}}
 or the name of one lag value which can be identified with \code{\link{lagNames}}}
 }
 \value{
