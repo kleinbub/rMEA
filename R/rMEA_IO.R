@@ -192,7 +192,7 @@ readMEA = function(
   }, lf, seq_along(lf))
 
 
-  #check if any MEA is > 10sd
+  #check if any na.omit MEA is > 10sd
   Map(function(x,i){
     myDat = c(x$s1,x$s2)
     mySD = stats::sd(myDat, na.rm = T)
