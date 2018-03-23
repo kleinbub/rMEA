@@ -195,8 +195,8 @@ readMEA = function(
   #check if any MEA is > 10sd
   Map(function(x,i){
     myDat = c(x$s1,x$s2)
-    mySD = stats::sd(myDat)
-    if(any(myDat > 10*mySD))
+    mySD = stats::sd(myDat, na.rm = T)
+    if(any(stats::na.omit(myDat) > 10*mySD))
       warning( round(length(myDat[myDat > 10*mySD])/length(myDat)*100,2) ,"% of the data was higher than 10 standard deviations in dyad: ",dyadIds[[i]], ", session: ",sess[[i]],", group:",group[[i]], ". Check the raw data!", call. = F)
   },lf,seq_along(lf))
 
