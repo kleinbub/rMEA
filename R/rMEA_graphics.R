@@ -147,7 +147,7 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
                     max(c(unlist(mean_lags,recursive = T), 0.22),na.rm=T) )
 
   defPar = list(type="n",ylim=myYlim, xlim=c(min(ran), max(ran)), col=c(colz, "gray40" ), xaxt="n",bty='n',     #neu standard y-achse
-                main="Cross correlation (abs) of real and contrast dyads", ylab=attr(mea,"ccf")$filter ,xlab="Lag (seconds)")
+                main="Cross correlation of real and contrast dyads", ylab=attr(mea,"ccf")$filter ,xlab="Lag (seconds)")
   resPar = dotsList(defPar,...)
   for(k in c("col")){if(length(resPar[[k]])<3) resPar[[k]] = rep(resPar[[k]], length.out=length(groups)+1) }
 

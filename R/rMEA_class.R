@@ -23,8 +23,9 @@
 #'     ccfRes: some useful row marginals
 #' @export
 
-MEA = function(dataframe, sampRate, filter = "raw",id,
-               session, group, s1Name, s2Name
+MEA = function(dataframe, sampRate, filter = "raw", id,
+               session, group, s1Name, s2Name,
+               uid = paste(group,id,session,sep="_")
                ){
   x = list("MEA"=dataframe,
            "ccf" = NULL,
@@ -39,7 +40,7 @@ MEA = function(dataframe, sampRate, filter = "raw",id,
     ccf = "",
     s1Name = s1Name,
     s2Name = s2Name,
-    uid = paste(group,id,session,sep="_")
+    uid = uid
   ))
   class(x) = c("MEA",class(x))
   return(x)
@@ -108,6 +109,13 @@ c.MEAlist = function(...){
   dots = lapply(dots, function(x){attributes(x)=NULL;x})
   MEAlist(do.call("c",dots))
 }
+
+#' @export
+"[.MEAlist" <- function(x,...,drop=FALSE){
+  y = NextMethod("[")
+  MEAlist(y)
+}
+
 
 
 #' Sets the group of MEA objects

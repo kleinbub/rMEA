@@ -11,9 +11,11 @@
 
 #' Get MEA attributes
 #'
-#' @param mea a single or a list of MEA objects
+#' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @return A string or a vector of strings containing the metadata.
-#' @details if a well formatted list of MEA objects is provided, the function returns a vector of results.
+#' @details if a well formatted list of MEA objects is provided, the function returns a vector
+#' of results for id, session, group and uid. sampRate, s1Name, and s2Name return always a single
+#' value, as they are not allowed to be mixed.
 #' @export
 id <- function(mea) {
   UseMethod("id", mea)
@@ -70,7 +72,7 @@ sampRate.MEA <- function(mea){
 #' @export
 sampRate.default <- function(mea){
   if (is.list(mea)) mea = MEAlist(mea)
-  sapply(mea, attr, "sampRate")
+  attr(mea, "sampRate")
 }
 
 #' @rdname id
@@ -85,7 +87,7 @@ s1Name.MEA <- function(mea){
 #' @export
 s1Name.default <- function(mea){
   if (is.list(mea)) mea = MEAlist(mea)
-  sapply(mea, attr, "s1Name")
+  attr(mea, "s1Name")
 }
 
 #' @rdname id
@@ -100,7 +102,7 @@ s2Name.MEA <- function(mea){
 #' @export
 s2Name.default <- function(mea){
   if (is.list(mea)) mea = MEAlist(mea)
-  sapply(mea, attr, "s2Name")
+  attr(mea, "s2Name")
 }
 
 #' @rdname id
@@ -117,3 +119,60 @@ uid.default <- function(mea){
   if (is.list(mea)) mea = MEAlist(mea)
   sapply(mea, attr, "uid")
 }
+
+
+#' Extract ccf values from MEA objects
+#'
+#' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
+#' @param type A character vector defining which ccf must be extracted.
+#' One of "matrix", "all_lags",  "s1_lead",   "s2_lead",   "lag_zero",  "s1_lead_0", "s2_lead_0", "grandAver",
+#' or the name of one lag value which can be identified with \code{\link{lagNames}}
+#'
+#' @return If \code{type="matrix"}, the whole ccf matrix is returned. Otherwise a vector containing the ccf
+#' time-series for the selected lag, or aggregated values is returned.
+#' If \code{mea} is a list, the return value is a list of the individual ccf of each MEA object.
+#' @export
+
+getCCF <- function (mea, type) {
+  UseMethod("getCCF", mea)
+}
+#' @export
+getCCF.MEA <- function (mea, type) {
+  if (!hasCCF(mea)) stop ("No ccf computation found, please refer to MEAccf() function.")
+  if (type %in% lagNames(mea)) {
+    return (mea$ccf[[type]])
+  } else if (type %in% names(mea$ccfRes)) {
+    return (mea$ccfRes[[type]])
+  } else if (type == "matrix") {
+    return (mea$ccf)
+  }
+}
+#' @export
+getCCF.default <- function (mea, type) {
+  if (is.list(mea)) mea = MEAlist(mea)
+  mea <- MEAlist(mea)
+  lapply(mea, getCCF, type)
+}
+
+
+#' Extract the lag names of a ccf analysis in MEA objects
+#'
+#' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
+#'
+#' @return a vector containing the labels of the lag values
+#' @export
+lagNames <- function (mea) {
+  UseMethod("lagNames", mea)
+}
+#' @export
+lagNames.MEA <- function (mea) {
+  if (!hasCCF(mea)) stop("No ccf computation found, please refer to MEAccf() function.")
+  names(mea$ccf)
+}
+#' @export
+lagNames.default <- function (mea){
+  if (is.list(mea)) mea = MEAlist(mea)
+  mea <- MEAlist(mea)
+  names(mea[[1]]$ccf)
+}
+

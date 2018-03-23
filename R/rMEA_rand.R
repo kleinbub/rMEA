@@ -45,10 +45,10 @@ shuffle = function(mea, size) {
     lapply(lrfn, function(x) { x$MEA[,1] }),
     lapply(lrfn, function(x) { x$MEA[,2] })
   )
+  #build names containing the original info
   names(ll)[1:(length(ll)/2)] = paste(names(ll)[1:(length(ll)/2)],substr(attr(mea,"s1Name"),1,3) ,sep="_")
   names(ll)[(length(ll)/2+1):length(ll)] = paste(names(ll)[(length(ll)/2+1):length(ll)],substr(attr(mea,"s2Name"),1,3),sep="_")
-  percs = sapply(mea,function(x){attr(x,"s1_%_movement")})
-  percs = c(percs,sapply(mea,function(x){attr(x,"s2_%_movement")}) )
+
   # calcola le possibili combinazioni ed estendi la lista con le pseudo-diadi
   combo = utils::combn(1:length(ll),2)
   #remove real combination
@@ -68,7 +68,7 @@ shuffle = function(mea, size) {
     colnames(res) = c(attr(mea,"s1Name"),attr(mea,"s2Name"))
     MEA(res, sampRate=attr(mea,"sampRate"), id=lead0(i,4),
         session="1", group="random", s1Name="s1Random", s2Name="s2Random",
-        filter = attr(mea,"filter")
+        filter = attr(mea,"filter"), uid = paste(names(ll)[com[i,1]],names(ll)[com[i,2]],sep="_|_")
         )
 
   })

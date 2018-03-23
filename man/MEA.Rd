@@ -5,7 +5,8 @@
 \alias{is.MEA}
 \title{\code{MEA} class constructor}
 \usage{
-MEA(dataframe, sampRate, filter = "raw", id, session, group, s1Name, s2Name)
+MEA(dataframe, sampRate, filter = "raw", id, session, group, s1Name, s2Name,
+  uid = paste(group, id, session, sep = "_"))
 
 is.MEA(x)
 }

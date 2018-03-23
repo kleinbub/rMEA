@@ -25,7 +25,7 @@ s2Name(mea)
 uid(mea)
 }
 \arguments{
-\item{mea}{a single or a list of MEA objects}
+\item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 }
 \value{
 A string or a vector of strings containing the metadata.
@@ -34,5 +34,7 @@ A string or a vector of strings containing the metadata.
 Get MEA attributes
 }
 \details{
-if a well formatted list of MEA objects is provided, the function returns a vector of results.
+if a well formatted list of MEA objects is provided, the function returns a vector
+of results for id, session, group and uid. sampRate, s1Name, and s2Name return always a single
+value, as they are not allowed to be mixed.
 }
