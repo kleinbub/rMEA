@@ -145,13 +145,13 @@ getCCF.MEA <- function (mea, type) {
     return (mea$ccfRes[[type]])
   } else if (type == "matrix") {
     return (mea$ccf)
-  }
+  } else stop ("'type' must be either \"matrix\", a lag label extracted with lagNames(), or one of:\r\n\"",paste0(ccfResNames(mea),collapse = "\", \""),"\"", call.=F)
 }
 #' @export
 getCCF.default <- function (mea, type) {
   if (is.list(mea)) mea = MEAlist(mea)
   mea <- MEAlist(mea)
-  lapply(mea, getCCF, type)
+  sapply(mea, getCCF, type)
 }
 
 

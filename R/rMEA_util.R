@@ -1,15 +1,27 @@
 
+#' Cohen's d
+#' A simple function to calculate Cohen's d effect size
+#' @param x,y two numeric vectors containing the scores of the two samples
+#'
+#' @export
+#'
+#' @examples
+#' # Generates two samples with means distance of 1 sd
+#' x = rnorm(1000, mean = 10, sd = 1.5)
+#' y = rnorm(1000, mean = 11.5, sd = 1.5)
+#' # cohen's d should approximate to 1
+#' cohens_d(x,y)
 cohens_d <- function(x, y) {
+  if(!is.numeric(x) || !is.numeric(y)) stop ("'x' and 'y' must be numeric vectors")
   lx <- length(x)- 1
   ly <- length(y)- 1
   md  <- abs(mean(x) - mean(y))        ## mean difference (numerator)
   csd <- lx * stats::var(x) + ly * stats::var(y)
   csd <- csd/(lx + ly)
   csd <- sqrt(csd)                     ## common sd computation
-
   cd  <- md/csd                        ## cohen's d
+  cd
 }
-
 
 
 ## binds unequal columns to a same data.frame padding NAs to the end of the shorter

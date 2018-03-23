@@ -4,16 +4,16 @@
 \alias{MEAscale}
 \title{Scaling (and centering) of motion energy time-series}
 \usage{
-MEAscale(mea, scaleFUN = sd, ..., center = F)
+MEAscale(mea, scale = "sd", ..., center = F)
 }
 \arguments{
 \item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
-\item{scaleFUN}{the function to be applied to each motion energy time-series to calculate a scaling factor. Default is standard deviation.}
-
 \item{...}{further arguments passed to \code{FUN}}
 
 \item{center}{either a logical value or a numeric vector of length 2 specifying separate centering values for s1 and s2.}
+
+\item{scaleFUN}{the function to be applied to each motion energy time-series to calculate a scaling factor. Default is standard deviation.}
 }
 \value{
 returns the same \code{MEA} or \code{MEAlist} object, with all motion energy data rescaled

@@ -24,3 +24,4 @@ _date: "3/21/2018"_
 * add outlier removal to the readme example
 * **smart** confidence interval analysis for bootstrap
 * dynamic window size!!!
+* cross-validation to define a confidence band for each lag value, instead of mean (for MEAlagplots and group/bootstrap comparisons)
