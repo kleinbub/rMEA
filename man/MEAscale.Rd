@@ -9,11 +9,12 @@ MEAscale(mea, scale = "sd", ..., center = F)
 \arguments{
 \item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
-\item{...}{further arguments passed to \code{FUN}}
+\item{scale}{either a numeric value or a function to be applied to each motion
+energy time-series to calculate a scaling factor. Default is standard deviation.}
+
+\item{...}{further arguments passed to \code{scale} if it is a function.}
 
 \item{center}{either a logical value or a numeric vector of length 2 specifying separate centering values for s1 and s2.}
-
-\item{scaleFUN}{the function to be applied to each motion energy time-series to calculate a scaling factor. Default is standard deviation.}
 }
 \value{
 returns the same \code{MEA} or \code{MEAlist} object, with all motion energy data rescaled
@@ -22,7 +23,7 @@ returns the same \code{MEA} or \code{MEAlist} object, with all motion energy dat
 Scaling (and centering) of motion energy time-series
 }
 \details{
-\code{FUN} is found by a call to  \code{\link[base]{match.fun}} and typically is either a function
+If \code{scale} is a function, it is found by a call to  \code{\link[base]{match.fun}} and typically is either a function
 or a symbol (e.g., a backquoted name) or a character string specifying a function
 to be searched for from the environment of the call to apply.
 If a \code{na.rm} argument is present in \code{FUN}
@@ -41,8 +42,14 @@ mea_raw <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
                      s1Name = "Patient", s2Name = "Therapist",
                      idOrder = c("id","session"), idSep="_", skip=1, nrow = 6000)
 
-## filter with moving average
-mea_scaled = MEAscale(mea_raw, scaleFUN = sd)
+## rescale with standard deviation
+mea_scaled = MEAscale(mea_raw, scale = "sd")
+
+## rescale by factor 0.7
+mea_scaled = MEAscale(mea_raw, scale = 0.7)
+
+## rescale s1
+mea_scaled = MEAscale(mea_raw, scale = "sd")
 
 ## assign groups names
 mea_raw <- setGroup(mea_raw, "raw")
