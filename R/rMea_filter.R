@@ -58,10 +58,11 @@ sasFiltB = function(a, sampRate, winSec=0.5){
 #' Scaling (and centering) of motion energy time-series
 #'
 #' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
-#' @param scaleFUN the function to be applied to each motion energy time-series to calculate a scaling factor. Default is standard deviation.
-#' @param ... further arguments passed to \code{FUN}
+#' @param scale either a numeric value or a function to be applied to each motion
+#' energy time-series to calculate a scaling factor. Default is standard deviation.
+#' @param ... further arguments passed to \code{scale} if it is a function.
 #' @param center either a logical value or a numeric vector of length 2 specifying separate centering values for s1 and s2.
-#' @details \code{FUN} is found by a call to  \code{\link[base]{match.fun}} and typically is either a function
+#' @details If \code{scale} is a function, it is found by a call to  \code{\link[base]{match.fun}} and typically is either a function
 #' or a symbol (e.g., a backquoted name) or a character string specifying a function
 #' to be searched for from the environment of the call to apply.
 #' If a \code{na.rm} argument is present in \code{FUN}
@@ -72,7 +73,7 @@ sasFiltB = function(a, sampRate, winSec=0.5){
 #' the first value will be subtracted from s1 and the second from s2.
 #' Note: the s1 and s2 signals are scaled independently.
 #' @return returns the same \code{MEA} or \code{MEAlist} object, with all motion energy data rescaled
-#' @importFrom stats sd
+# #' @importFrom stats sd
 #' @examples
 #' ## read the first 4 minutes of the normal sample
 #' ##   (intake interviews of patients that carried on therapy)
@@ -81,8 +82,14 @@ sasFiltB = function(a, sampRate, winSec=0.5){
 #'                      s1Name = "Patient", s2Name = "Therapist",
 #'                      idOrder = c("id","session"), idSep="_", skip=1, nrow = 6000)
 #'
-#' ## filter with moving average
-#' mea_scaled = MEAscale(mea_raw, scaleFUN = sd)
+#' ## rescale with standard deviation
+#' mea_scaled = MEAscale(mea_raw, scale = "sd")
+#'
+#' ## rescale by factor 0.7
+#' mea_scaled = MEAscale(mea_raw, scale = 0.7)
+#'
+#' ## rescale s1
+#' mea_scaled = MEAscale(mea_raw, scale = "sd")
 #'
 #' ## assign groups names
 #' mea_raw <- setGroup(mea_raw, "raw")
@@ -98,17 +105,25 @@ sasFiltB = function(a, sampRate, winSec=0.5){
 #' @export
 #'
 
-MEAscale = function(mea, scaleFUN=sd, ..., center=F){
+MEAscale = function(mea, scale="sd", ..., center=F){
   cat("\r\nRescaling data:\r\n")
-  fil = paste0("rescaled (", as.character(substitute(scaleFUN)),")" )
-  scaleFUN = match.fun(scaleFUN)
-  dots = list(...)
-  if("na.rm" %in%  methods::formalArgs(scaleFUN) && !"na.rm"%in% names(dots)){ #if the function allows na.rm, set it to TRUE
-    dots[["na.rm"]] = T
+  if(is.numeric(scale)){
+    scaleVAL = scale
+    fil = paste0("rescaled (",scaleVAL,")")
+    scaleFUN = function(x){scaleVAL}
+    dots = list()
+  } else {
+    scaleFUN = match.fun(scale)
+    fil = paste0("rescaled (", as.character(substitute(scale)),")" )
+    if (length(fil)>1) fil = "rescaled (custom)"
+    dots = list(...)
+    if("na.rm" %in%  methods::formalArgs(scaleFUN) && !"na.rm"%in% names(dots)){ #if the function allows na.rm, set it to TRUE
+      dots[["na.rm"]] = T
+    }
   }
   res = MEAmap(mea, function(x){
-    x[[1]]=scale(x[[1]], scale = do.call(scaleFUN, c(list(x[[1]]),dots)), center = center)
-    x[[2]]=scale(x[[2]], scale = do.call(scaleFUN, c(list(x[[2]]),dots)), center = center)
+    x[[1]]=base::scale(x[[1]], scale = do.call(scaleFUN, c(list(x[[1]]),dots)), center = center)
+    x[[2]]=base::scale(x[[2]], scale = do.call(scaleFUN, c(list(x[[2]]),dots)), center = center)
     x
   },
   label=fil)
