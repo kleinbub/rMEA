@@ -409,8 +409,9 @@ diagnosticPlot = function(mea,width=60,...){
 #'
 #'
 #' @param x an object of class \code{MEA} (see function \code{\link{readMEA}}).
-#' @param from integer. The first sample to be plotted. Defaults to the first sample of signal
-#' @param to integer. The last sample to be plotted. Defaults to the whole length of the signal.
+#' @param from either an integer or a string in the format hh:mm:ss or mm:ss representing the starting second.
+#' @param to if \code{duration} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the ending second.
+#' @param duration if \code{to} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the amount of seconds to be plotted.
 #' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
 #' One of "sync", "pace", "zero", "lead", "pace0", "lead0".
 #' @param rescale logical. Should the motion energy time-series be rescaled?
@@ -423,20 +424,35 @@ diagnosticPlot = function(mea,width=60,...){
 #' mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
 #'                      s1Name = "Patient", s2Name = "Therapist", skip=1,
 #'                      idOrder = c("id","session"), idSep="_")
+#' mea_normal <- MEAccf(mea_normal, lagSec = 5, winSec = 30, incSec = 10, ABS = FALSE)
 #' ## Visual inspection of the data
-#' plot(mea_normal[[1]], from = 1500, to = 3500)
+#' plot(mea_normal[[1]], from = 60, to = "2:00")
+#' plot(mea_normal[[1]], from = 0, duration = "5:00")
+#'
+#' #' ## Visualize CCF inspection of the data
+#' plot(mea_normal[[1]], from = 0, duration = "2:00", ccf = "lag_zero", rescale=TRUE)
 #'
 #' @export
 #'
-plot.MEA = function(x,from=1,to=nrow(mea$MEA), ccf=F, rescale =F,... ){
+plot.MEA = function(x, from=0, to = NULL, duration=NULL, ccf=F, rescale =F,... ){
   #### debug
   # mea = mea3$all_38508_8
   # width = 60
   #######
   mea = x
   sampRate = attr(mea,"sampRate")
-  if(to<from) stop("to cannot be smaller than from",call.=F)
+  from = timeMaster(from, out="sec") * sampRate +1
+  if(!missing(to)){
+    if(!missing(duration)) stop("'duration' and 'to' cannot be both specified.",call.=F)
+    to = timeMaster(to, out="sec") * sampRate
+  } else if(!missing(duration)) {
+    duration = timeMaster(duration, out="sec") * sampRate
+    to = min(from + duration, nrow(mea$MEA))
+  } else {
+    to = nrow(mea$MEA)
+  }
 
+  if(to<from) stop("'to' cannot be smaller than 'from'",call.=F)
   #find last nonzero value
   if(to==nrow(mea$MEA)){
     zeroes = apply(mea$MEA,1,sum)
@@ -457,7 +473,8 @@ plot.MEA = function(x,from=1,to=nrow(mea$MEA), ccf=F, rescale =F,... ){
     s1 = rangeRescale(s1,0,1)
     s2 = rangeRescale(s2,0,1)
   }
-  myYlim= c(-0.2,max(s1,s2,na.rm = T))
+  myYlim= c(min(s1,s2,na.rm = T),max(s1,s2,na.rm = T))
+  myYlim[1] = myYlim[1]-myYlim[2]*0.05
   # colz = c("#2E282A","#EF3E36","red")
   colz = c(mycolz(2), "red")
   origPar = graphics::par(c("xpd","mar","font"))
@@ -478,7 +495,8 @@ plot.MEA = function(x,from=1,to=nrow(mea$MEA), ccf=F, rescale =F,... ){
     ccf = ccf[1:(length(ccf)-2)]
   } else ccf = NULL
 
-  graphics::par(xpd=TRUE,mar=c(3,0.5,2.5,0.5))
+  #draw plot
+  graphics::par(xpd=TRUE, mar=c(3,3.5,2.5,0.5))
 
   defPar = list(
     x = s1, type = "l",col=colz ,axes = F, ann=FALSE, ylim = myYlim, lty= c(1,1,3), lwd=c(2,2,2),
@@ -502,49 +520,49 @@ plot.MEA = function(x,from=1,to=nrow(mea$MEA), ccf=F, rescale =F,... ){
       graphics::text(0, myYlim[2]/2-0.3, "ccf = 0")}
   }
 
-
+  graphics::axis(2)
   graphics::title(main = resPar$main)
-  graphics::text(x = length(all)/2,-0.25,
+  graphics::text(x = length(all)/2, myYlim[1]-myYlim[2]*0.01 ,
        labels =  paste(timeMaster(round((from-1)/sampRate),out="min"), "to", timeMaster(round(to/sampRate),out="min"))
        ,cex=1.1 )
   graphics::par(font=2)
   legend_labs = c(attr(mea,"s1Name"),attr(mea,"s2Name"))
   if(!is.null(ccf)) legend_labs = c(legend_labs, paste0("CCF",ccf_lab))
-  graphics::legend(length(all)/2,-0.3,xjust = 0.5,legend=legend_labs,lwd=resPar$lwd,col = resPar$col, bty = "n",horiz=T,cex =1.3,lty=resPar$lty)
+  graphics::legend(length(all)/2,myYlim[1]-myYlim[2]*0.05 ,xjust = 0.5,legend=legend_labs,lwd=resPar$lwd,col = resPar$col, bty = "n",horiz=T,cex =1.3,lty=resPar$lty)
   graphics::par(origPar)
 }
 
-#' Plots all MEA signals contained in an object of class \code{MEAlist}
-#'
-#'
-#' @param x an object of class \code{MEAlist}
-#' @param from integer. The first sample to be plotted. Defaults to the beginning of the signals.
-#' @param to integer. The last sample to be plotted. Defaults to the length of the longest MEA signal
-#' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
-#' One of "all_lags", "s1_lead", "s2_lead", "lag_zero", "s1_lead_0", "s2_lead_0".
-#' @param rescale logical. Should the motion energy time-series be rescaled?
-#' @param ... further graphical parameters passed to  \code{\link[graphics]{plot}}
-#'
-#' @details Note: if more of than 10s of trailing zeroes are found at the end of both s1 and s2 signals they are truncated.
-#'
-#' @export
-#'
-plot.MEAlist = function(x,from=1,to=max(sapply(mea,function(x){nrow(x$MEA)})),ccf = F ,rescale =F,...){
-  mea = x
-  v="y"
-  if(length(mea)>10) {
-    v <- readline(paste("Warning: you are trying to create",length(mea),"plots. Are you sure you want to continue?\r\ny/n: "))
-  }
-  if(tolower(substr(as.character(v),1,1)) == "y"){
-    cat("\r\nDrawing plots:\r\n")
-    i=1
-    for(x in mea){
-      prog(i,length(mea)); i= i+1
-      if(to>nrow(x$MEA)) to = nrow(x$MEA)
-      graphics::plot(x,from=from,to=to, ccf=ccf, rescale = rescale,...)
-    }
-  } else cat("\r\nOperation aborted.")
-}
+# #' Plots all MEA signals contained in an object of class \code{MEAlist}
+# #'
+# #'
+# #' @param x an object of class \code{MEAlist}
+# #' @param from integer. The first sample to be plotted. Defaults to the beginning of the signals.
+# #' @param to integer. The last sample to be plotted. Defaults to the length of the longest MEA signal
+# #' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
+# #' One of "all_lags", "s1_lead", "s2_lead", "lag_zero", "s1_lead_0", "s2_lead_0".
+# #' @param rescale logical. Should the motion energy time-series be rescaled?
+# #' @param ... further graphical parameters passed to  \code{\link[graphics]{plot}}
+# #'
+# #' @details Note: if more of than 10s of trailing zeroes are found at the end of both s1 and s2 signals they are truncated.
+# #'
+# #' @export
+
+# plot.MEAlist = function(x,from=1,to=NULL, duration=NULL,ccf = F ,rescale =F,...){
+#   mea = x
+#   v="y"
+#   if(length(mea)>10) {
+#     v <- readline(paste("Warning: you are trying to create",length(mea),"plots. Are you sure you want to continue?\r\ny/n: "))
+#   }
+#   if(tolower(substr(as.character(v),1,1)) == "y"){
+#     cat("\r\nDrawing plots:\r\n")
+#     i=1
+#     for(x in mea){
+#       prog(i,length(mea)); i= i+1
+#       if(to>nrow(x$MEA)) to = nrow(x$MEA)
+#       graphics::plot(x,from=from,to=to, ccf=ccf, rescale = rescale,...)
+#     }
+#   } else cat("\r\nOperation aborted.")
+# }
 
 mycolz = function(n,demo=F,alpha=1){
   fmod= function(k,m){

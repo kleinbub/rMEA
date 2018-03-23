@@ -4,15 +4,17 @@
 \alias{plot.MEA}
 \title{Plots an object of class \code{MEA}}
 \usage{
-\method{plot}{MEA}(x, from = 1, to = nrow(mea$MEA), ccf = F,
+\method{plot}{MEA}(x, from = 0, to = NULL, duration = NULL, ccf = F,
   rescale = F, ...)
 }
 \arguments{
 \item{x}{an object of class \code{MEA} (see function \code{\link{readMEA}}).}
 
-\item{from}{integer. The first sample to be plotted. Defaults to the first sample of signal}
+\item{from}{either an integer or a string in the format hh:mm:ss or mm:ss representing the starting second.}
 
-\item{to}{integer. The last sample to be plotted. Defaults to the whole length of the signal.}
+\item{to}{if \code{duration} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the ending second.}
+
+\item{duration}{if \code{to} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the amount of seconds to be plotted.}
 
 \item{ccf}{either FALSE or a string representing the type of ccf to be overlayed.
 One of "sync", "pace", "zero", "lead", "pace0", "lead0".}
@@ -33,7 +35,12 @@ path_normal <- system.file("extdata/normal/200_01.txt", package = "rMEA")
 mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
                      s1Name = "Patient", s2Name = "Therapist", skip=1,
                      idOrder = c("id","session"), idSep="_")
+mea_normal <- MEAccf(mea_normal, lagSec = 5, winSec = 30, incSec = 10, ABS = FALSE)
 ## Visual inspection of the data
-plot(mea_normal[[1]], from = 1500, to = 3500)
+plot(mea_normal[[1]], from = 60, to = "2:00")
+plot(mea_normal[[1]], from = 0, duration = "5:00")
+
+#' ## Visualize CCF inspection of the data
+plot(mea_normal[[1]], from = 0, duration = "2:00", ccf = "lag_zero", rescale=TRUE)
 
 }
