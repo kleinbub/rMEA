@@ -7,16 +7,16 @@
 MEAlagplot(mea, contrast = F, by.group = T, ...)
 }
 \arguments{
-\item{mea}{a well formatted list of \code{MEA} objects (see function \code{\link{MEAlist}}).}
+\item{mea}{a list of \code{MEA} objects (see function \code{\link{MEAlist}}).}
 
-\item{contrast}{either FALSE or an object of class \code{MEAlist} to be used as a contrast}
+\item{contrast}{either FALSE or a list of \code{MEA} objects to be used as a contrast}
 
 \item{by.group}{logical. Should the different groups of \code{mea} be plotted separately?}
 
 \item{...}{further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[graphics]{plot}}}
 }
 \description{
-Provides a graphical representation of the comparison between two \code{MEAlist} objects.
+Provides a graphical representation of the comparison between two lists of \code{MEA} objects.
 The X-axis represents the lag values over which cross-correlation was calculated (in seconds), the Y-axis represents the averaged strength of the cross-correlation.
 Typically, the  is useful for a visual inspection of the strength of synchrony from real dyads in relation to synchrony expected by coincidence (pseudosynchrony).
 }

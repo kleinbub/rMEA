@@ -9,13 +9,13 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## 1.0.0.9010
+## 1.0.0.9011
 _date: "3/21/2018"_
 
 * Identify outliers in MEAlagplot()
 * 'GET' functions, e.g. getCCF, getMEA
 * add a $rand object to _MEA_ class
-* all functions accepting _MEAlist_ objects should accept a list instead and try to parse as _MEAlist_ internally
+* ~~all functions accepting _MEAlist_ objects now should accept a list instead and try to parse as _MEAlist_ internally~~
 * Calculate % of simultaneous zeroes (when zeros are during at least 5s)
 * Implement peak picking algorithms results in $ccfRes
 * clean code: debug comments, italian comments, old commented code

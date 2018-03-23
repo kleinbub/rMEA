@@ -7,7 +7,7 @@
 shuffle(mea, size)
 }
 \arguments{
-\item{mea}{an object of class \code{MEAlist} (see function \code{\link{readMEA}}).}
+\item{mea}{a list of \code{MEA} objects (see function \code{\link{readMEA}}).}
 
 \item{size}{integer. The number of combinations to be returned.}
 }

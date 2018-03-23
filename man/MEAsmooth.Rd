@@ -7,7 +7,7 @@
 MEAsmooth(mea, moving.average.win = 0.5)
 }
 \arguments{
-\item{mea}{an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})}
+\item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
 \item{moving.average.win}{numeric. The size of the filter window, in seconds or fractions of seconds.}
 }

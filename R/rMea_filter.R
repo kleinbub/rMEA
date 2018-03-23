@@ -3,7 +3,7 @@
 #' This function applies a moving average filter, based on SAS "proc expand" procedure. The moving average is applied independently on each subject's motion energy data.
 #' NA values are set to 0.
 #'
-#' @param mea an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})
+#' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param moving.average.win numeric. The size of the filter window, in seconds or fractions of seconds.
 #'
 #' @return The filtered object(s)
@@ -57,7 +57,7 @@ sasFiltB = function(a, sampRate, winSec=0.5){
 
 #' Scaling (and centering) of motion energy time-series
 #'
-#' @param mea an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})
+#' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param scaleFUN the function to be applied to each motion energy time-series to calculate a scaling factor. Default is standard deviation.
 #' @param ... further arguments passed to \code{FUN}
 #' @param center either a logical value or a numeric vector of length 2 specifying separate centering values for s1 and s2.
@@ -120,7 +120,7 @@ MEAscale = function(mea, scaleFUN=sd, ..., center=F){
 #'
 #' This function allows to substitute the values greater or less than a specific threshold. The default threshold is 10 times the standard deviation of the time-series.
 #'
-#' @param mea an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}}).
+#' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param threshold a numeric value, or a function returning the threshold value to consider data as outliers.
 #' @param direction a text string. One of "\code{greater}" or "\code{less}": can be abbreviated.
 #' @param replace a numeric, NULL, or NA value to use as substitution.
@@ -161,11 +161,11 @@ MEAoutlier = function(mea, threshold=function(x){stats::sd(x)*10}, direction=c("
 
 
 
-#' Apply a function to a MEA or MEAlist object
+#' Apply a function to a single or a list of MEA objects
 #'
 #' MEApply is a wrapper to \code{\link[base]{do.call}} that allows to apply a function on the motion energy data of one or multiple \code{MEA} objects. Complex constructions are possible, see details.
 #'
-#' @param mea an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})
+#' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param FUN function to apply, found via \code{\link[base]{match.fun}}.
 #' @param label a character vector to update the 'filter' attribute of \code{mea}.
 #' @param ... further arguments passed to \code{FUN}. If a function is provided,
@@ -177,6 +177,15 @@ MEAoutlier = function(mea, threshold=function(x){stats::sd(x)*10}, direction=c("
 
 MEAmap = function(mea, FUN, label="", ...){
   UseMethod("MEAmap",mea)
+}
+
+MEAmap.default = function(mea,FUN,label,...){
+  if(is.list(mea)){
+    mea = MEAlist(mea)
+    MEAmap(mea,FUN,label,...)
+  } else {
+    stop("This function accepts only MEA objects (individual or a list of them). Please use readMEA() to import files")
+  }
 }
 
 #' @export

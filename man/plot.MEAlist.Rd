@@ -15,7 +15,7 @@
 \item{to}{integer. The last sample to be plotted. Defaults to the length of the longest MEA signal}
 
 \item{ccf}{either FALSE or a string representing the type of ccf to be overlayed.
-One of "sync", "pace", "zero", "lead", "pace0", "lead0".}
+One of "all_lags", "s1_lead", "s2_lead", "lag_zero", "s1_lead_0", "s2_lead_0".}
 
 \item{rescale}{logical. Should the motion energy time-series be rescaled?}
 

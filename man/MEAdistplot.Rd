@@ -9,14 +9,14 @@ MEAdistplot(mea, contrast = F, by.group = T, ...)
 \arguments{
 \item{mea}{a well formatted list of \code{MEA} objects (see function \code{\link{MEAlist}}).}
 
-\item{contrast}{either FALSE or an object of class \code{MEAlist} to be used as a contrast}
+\item{contrast}{either FALSE or a list of \code{MEA} objects to be used as a contrast}
 
 \item{by.group}{logical. Should the different groups of \code{mea} be plotted separately?}
 
 \item{...}{further graphical parameters passed to  \code{\link[graphics]{plot}}}
 }
 \description{
-Plots the distribution of the average cross-correlations in a \code{MEAlist} object.
+Plots the distribution of the average cross-correlations in a list of \code{MEA} objects.
 }
 \details{
 If \code{contrast} is defined, then a normalized difference (Cohen's \emph{d}) between the means of each group and the contrast is provided.

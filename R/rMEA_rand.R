@@ -10,7 +10,7 @@
 #' This function recombines the s1 and s2 motion energy time-series between all \code{MEA} objects in the supplied list.
 #' It is typically used to compare genuine synchrony of real data with pseudosynchrony of shuffled (recombined) data.
 #'
-#' @param mea an object of class \code{MEAlist} (see function \code{\link{readMEA}}).
+#' @param mea a list of \code{MEA} objects (see function \code{\link{readMEA}}).
 #' @param size integer. The number of combinations to be returned.
 #'
 #' @details The shuffling process first creates all possible combinations between s1 and s2 of all \code{MEA} objects in the supplied list,
@@ -35,11 +35,8 @@
 #' @export
 #'
 shuffle = function(mea, size) {
-  #if(any(!sapply(mea, is.MEA)))
-  if(!is.MEAlist(mea))
-    stop("This function accepts only MEAlist objects. Please use readMEA() to import files")
 
-  lrfn = mea
+  lrfn = MEAlist(mea)
   cat("\r\nShuffling dyads:\r\n")
 
 

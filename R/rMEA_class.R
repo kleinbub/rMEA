@@ -55,7 +55,8 @@ MEA = function(dataframe, sampRate, filter = "raw",id,
 #' @return an object of class \code{MEAlist}
 #' @export
 MEAlist = function(listOfMea){
-  if(any(!sapply(listOfMea, is.MEA) ) ) stop("Only a list of MEA objects can be used to create a MEAlist", call.=F)
+  if(!is.list(listOfMea) || any(!sapply(listOfMea, is.MEA) ) ) stop("The supplied object must be a list containing only MEA objects", call.=F)
+  if(length(listOfMea)==0) stop("The supplied list is empty",call.=F)
   class(listOfMea) = "MEAlist"
   attributes(listOfMea) = c(attributes(listOfMea), list(
     nId = length(unique(sapply(listOfMea, attr, "id"))),
@@ -209,4 +210,5 @@ summary.MEAlist = function(object, ...){
   invisible(Q)
 
 }
+
 

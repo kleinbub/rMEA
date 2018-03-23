@@ -1,10 +1,10 @@
-#' Moving-windows lagged cross-correlation routine for \code{MEA} and \code{MEAlist} objects
+#' Moving-windows lagged cross-correlation routine for \code{MEA} objects
 #'
 #' This function analyzes a bivariate MEA signal represented by two time-series (subject 1 "s1", subject 2 "s2") resulting from a dyadic interaction.
 #' MEAccf performs windowed cross-correlations with specified increments. The cross-correlation analysis is repeated for each
 #' lag step, with discrete increments of 1 second in both directions.
 #'
-#' @param mea an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})
+#' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param lagSec an integer specifying the maximum number of lags (in seconds) for which the time-series will be shifted forwards and backwards.
 #' @param winSec an integer specifying the cross-correlation window size (in seconds).
 #' @param incSec an integer specifying the step size (in seconds) between successive windows. Values lower than \code{winSec} result in overlapping windows.
@@ -39,6 +39,15 @@
 #' @export
 MEAccf = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   UseMethod("MEAccf",mea)
+}
+#' @export
+MEAccf.default = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
+  if(is.list(mea)){
+    mea = MEAlist(mea)
+    MEAccf(mea, lagSec, winSec, incSec, r2Z=r2Z, ABS=ABS)
+  } else {
+    stop("This function accepts only MEA objects (individual or a list of them). Please use readMEA() to import files")
+  }
 }
 
 #' @export
@@ -100,7 +109,7 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
         if(iLag<0){k=xRange;xRange=yRange;yRange=k;} #valori alti a lag positivi implicano che il sogg 2 segue sogg 1
         x = xWin[xRange]
         y = yWin[yRange]
-        if(sum(x!=y)<2 ) cor_res = NA #controlla che ci siano almeno 3 punti !=0
+        if(sum(x!=y,na.rm = T)<2 ) cor_res = NA #controlla che ci siano almeno 3 punti !=0
         else cor_res = suppressWarnings(.Call(C_cor, x, y, 2L, FALSE))
         # if(!is.na(cor_res) && cor_res==1) cor_res = 0.999
         #if(!is.na(cor_res) && cor_res == 1) warning("In dyad: ", attr(mea,"uid"), ", correlation was 1 in window: ",iWin," and lag: ",iLag,".\r\nX: ",paste(x,collapse = " "),"\r\nY: ",paste(y,collapse = " "),"\r\nPlease check your raw data and report this diagnostic message to developers." ,call.=F)

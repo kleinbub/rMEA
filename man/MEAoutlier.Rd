@@ -8,7 +8,7 @@ MEAoutlier(mea, threshold = function(x) {     stats::sd(x) * 10 },
   direction = c("greater", "less"), replace = NA)
 }
 \arguments{
-\item{mea}{an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}}).}
+\item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
 \item{threshold}{a numeric value, or a function returning the threshold value to consider data as outliers.}
 

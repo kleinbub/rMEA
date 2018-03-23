@@ -240,17 +240,6 @@ readMEA = function(
         )
   }, lf, seq_along(lf))
   names(experiment) = mapply(paste,group,dyadIds,sess, MoreArgs=list(sep="_"))
-
-    # class(experiment) = c("MEAlist",class(experiment))
-    # attributes(experiment) = c(attributes(experiment), list(
-    #   nId = length(unique(unlist(dyadIds))),
-    #   n = nFiles,
-    #   groups = unique(unlist(group)),
-    #   sampRate = sampRate,
-    #   s1Name = s1Name,
-    #   s2Name = s2Name
-    # ))
-
   return(MEAlist(experiment))
 
 }

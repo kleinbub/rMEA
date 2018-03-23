@@ -1,11 +1,4 @@
 # PLOTS for MEA
-#
-# 1. socialPresence --> sync|__lag, iterato sui diversi gruppi, più random + Social presence analys
-# 2. densityplot --> le distribuzioni di densità delle grandaverage, sui diversi gruppi + random
-# 3. heatmap --> per singolo MEA, oppure su MEAlist esporta i file
-# 4. diagnostic plot --> begin, mid, end of signals
-# 5. simple plot
-#
 
 dotsList = function(parList, ...){
   dots = list(...)
@@ -52,13 +45,13 @@ colTrans <- function(col, luminosity=NA, alpha=NA){
 
 #' Plots the average cross-correlation at different lags
 #'
-#' Provides a graphical representation of the comparison between two \code{MEAlist} objects.
+#' Provides a graphical representation of the comparison between two lists of \code{MEA} objects.
 #' The X-axis represents the lag values over which cross-correlation was calculated (in seconds), the Y-axis represents the averaged strength of the cross-correlation.
 #' Typically, the  is useful for a visual inspection of the strength of synchrony from real dyads in relation to synchrony expected by coincidence (pseudosynchrony).
 #'
 #'
-#' @param mea a well formatted list of \code{MEA} objects (see function \code{\link{MEAlist}}).
-#' @param contrast either FALSE or an object of class \code{MEAlist} to be used as a contrast
+#' @param mea a list of \code{MEA} objects (see function \code{\link{MEAlist}}).
+#' @param contrast either FALSE or a list of \code{MEA} objects to be used as a contrast
 #' @param by.group logical. Should the different groups of \code{mea} be plotted separately?
 #' @param ... further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[graphics]{plot}}
 #'
@@ -114,14 +107,14 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
   if(is.logical(contrast) && contrast == F){
     contrast = F
   } else if(is.list(contrast) && all(sapply(contrast,is.MEA))){
-    if(!hasCCF(contrast)) stop("'contrast' object had no valid CCF informations. Refer to function MEAccf()", call.=F)
-    boot = contrast
+    boot = MEAlist(contrast)
+    if(!hasCCF(boot)) stop("'contrast' object had no valid CCF informations. Refer to function MEAccf()", call.=F)
     contrast = T
     if(length(attr(boot,"groups"))>1 ){
       boot = setGroup(boot, "Contrast")
       warning("Contrast data was collapsed to a single group.",call.=F)
     }
-  } else stop("contrast must either be FALSE or a MEAlist object")
+  } else stop("contrast must either be FALSE or a list of MEA object")
 
   if(by.group)
     mea = MEAlist(mea)
@@ -201,10 +194,10 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
 
 #' Distribution of cross-correlations
 #'
-#' Plots the distribution of the average cross-correlations in a \code{MEAlist} object.
+#' Plots the distribution of the average cross-correlations in a list of \code{MEA} objects.
 #'
 #' @param mea a well formatted list of \code{MEA} objects (see function \code{\link{MEAlist}}).
-#' @param contrast either FALSE or an object of class \code{MEAlist} to be used as a contrast
+#' @param contrast either FALSE or a list of \code{MEA} objects to be used as a contrast
 #' @param by.group logical. Should the different groups of \code{mea} be plotted separately?
 #' @param ... further graphical parameters passed to  \code{\link[graphics]{plot}}
 #'
@@ -250,14 +243,13 @@ MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
   # contrast = meaR
   # colz = c(1,2)
   mea = MEAlist(mea)
-  # if(!is.MEAlist(mea) || any(!sapply(mea,is.MEA))) stop("Argument 'mea' must be a list of MEA objects", call.=F)
   if(!hasCCF(mea)) stop("Density plot requires MEA objects with valid CCF informations. Refer to function MEAccf()", call.=F)
 
   if(is.logical(contrast) && contrast == F){
     contrast = F
   } else if(is.list(contrast) && all(sapply(contrast,is.MEA))){
-    if(!hasCCF(contrast)) stop("'contrast' object had no valid CCF informations. Refer to function MEAccf()", call.=F)
-    boot = contrast
+    boot = MEAlist(contrast)
+    if(!hasCCF(boot)) stop("'contrast' object had no valid CCF informations. Refer to function MEAccf()", call.=F)
     contrast = T
     if(length(attr(boot,"groups"))>1 ){
       boot = setGroup(boot, "Contrast")
@@ -529,7 +521,7 @@ plot.MEA = function(x,from=1,to=nrow(mea$MEA), ccf=F, rescale =F,... ){
 #' @param from integer. The first sample to be plotted. Defaults to the beginning of the signals.
 #' @param to integer. The last sample to be plotted. Defaults to the length of the longest MEA signal
 #' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
-#' One of "sync", "pace", "zero", "lead", "pace0", "lead0".
+#' One of "all_lags", "s1_lead", "s2_lead", "lag_zero", "s1_lead_0", "s2_lead_0".
 #' @param rescale logical. Should the motion energy time-series be rescaled?
 #' @param ... further graphical parameters passed to  \code{\link[graphics]{plot}}
 #'

@@ -2,12 +2,12 @@
 % Please edit documentation in R/rMea_filter.R
 \name{MEAmap}
 \alias{MEAmap}
-\title{Apply a function to a MEA or MEAlist object}
+\title{Apply a function to a single or a list of MEA objects}
 \usage{
 MEAmap(mea, FUN, label = "", ...)
 }
 \arguments{
-\item{mea}{an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})}
+\item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
 \item{FUN}{function to apply, found via \code{\link[base]{match.fun}}.}
 

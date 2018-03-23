@@ -7,7 +7,7 @@
 MEAscale(mea, scaleFUN = sd, ..., center = F)
 }
 \arguments{
-\item{mea}{an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})}
+\item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
 \item{scaleFUN}{the function to be applied to each motion energy time-series to calculate a scaling factor. Default is standard deviation.}
 

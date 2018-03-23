@@ -10,7 +10,7 @@ Johann R. Kleinbub
 -   Identify outliers in MEAlagplot()
 -   'GET' functions, e.g. getCCF, getMEA
 -   add a $rand object to *MEA* class
--   all functions accepting *MEAlist* objects should accept a list instead and try to parse as *MEAlist* internally
+-   ~~all functions accepting *MEAlist* objects now should accept a list instead and try to parse as *MEAlist* internally~~
 -   Calculate % of simultaneous zeroes (when zeros are during at least 5s)
 -   Implement peak picking algorithms results in $ccfRes
 -   clean code: debug comments, italian comments, old commented code
@@ -18,3 +18,4 @@ Johann R. Kleinbub
 -   diagnostic plots with 2 rows, on the second showing random section in great detail, e.g. 10 s of nonempty signal
 -   add outlier removal to the readme example
 -   **smart** confidence interval analysis for bootstrap
+-   dynamic window size!!!

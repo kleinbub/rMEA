@@ -2,12 +2,12 @@
 % Please edit documentation in R/rMEA_ccf.R
 \name{MEAccf}
 \alias{MEAccf}
-\title{Moving-windows lagged cross-correlation routine for \code{MEA} and \code{MEAlist} objects}
+\title{Moving-windows lagged cross-correlation routine for \code{MEA} objects}
 \usage{
 MEAccf(mea, lagSec, winSec, incSec, r2Z = T, ABS = T)
 }
 \arguments{
-\item{mea}{an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})}
+\item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
 \item{lagSec}{an integer specifying the maximum number of lags (in seconds) for which the time-series will be shifted forwards and backwards.}
 
