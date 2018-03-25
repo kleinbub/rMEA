@@ -3,13 +3,14 @@
 #' The preferred way to create an object of class \code{MEA} is through the function \code{\link{readMEA}}.
 #'
 #' @param dataframe a data frame with 2 columns containing MEA data respectively for subject 1 (s1) and subject 2 (s2).
-#' @param sampRate integer. The sampling rate of the MEA data. Normally derived from the framerate of the analyzed video sequence (frames per second; fps)
+#' @param sampRate integer. The sampling rate of the MEA data. Normally derived from the framerate of the analyzed video sequence (frames per second; fps).
 #' @param filter a string describing the pre-processing that has been applied on the raw data.
 #' @param id a string representing a unique identifier of the dyad that the MEA data belong to.
 #' @param session an integer representing the session (or experiment, interaction, etc); if each dyad is measured only once, the default value is 1.
 #' @param group a string naming the group the dyad belongs to, such as diagnostic group, clinic, etc.
-#' @param s1Name a string naming subject 1
-#' @param s2Name a string naming subject 2
+#' @param s1Name a string naming subject 1.
+#' @param s2Name a string naming subject 2.
+#' @param uid a string providing a unique identifier of the file. By default 'group_id_session'.
 #' @param x object to be tested.
 #' @details It is advised to \strong{not} create the \code{MEA} object manually but to always use the function \code{\link{readMEA}} instead.
 #'
