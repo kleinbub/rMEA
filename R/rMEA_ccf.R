@@ -3,7 +3,6 @@
 #' This function analyzes a bivariate MEA signal represented by two time-series (subject 1 "s1", subject 2 "s2") resulting from a dyadic interaction.
 #' MEAccf performs windowed cross-correlations with specified increments. The cross-correlation analysis is repeated for each
 #' lag step, with discrete increments of 1 sample in both directions.
-#' asd
 #'
 #' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param lagSec an integer specifying the maximum number of lags (in seconds) for which the time-series will be shifted forwards and backwards.
