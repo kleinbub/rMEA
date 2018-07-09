@@ -7,6 +7,10 @@ Johann R. Kleinbub
 
 *date: "3/21/2018"*
 
+### warning!
+
+-   Questa cosa: attributes(experiment2)=attributes(experiment) è male perché sovrascrive anche l'attributo "names" che invece deve essere tenuto free. Sostituisci con structure(experiment2, "asd"=attr(experiment2,"asd"))
+
 ### easy stuff for next release
 
 -   Identify outliers in MEAlagplot()

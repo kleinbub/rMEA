@@ -9,8 +9,8 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## 1.0.0.9011
-_date: "3/21/2018"_
+### warning!
+* Questa cosa: attributes(experiment2)=attributes(experiment) è male perché sovrascrive anche l'attributo "names"  che invece deve essere tenuto free. Sostituisci con structure(experiment2, "asd"=attr(experiment2,"asd"))
 
 ### easy stuff for next release
 
@@ -23,6 +23,9 @@ _date: "3/21/2018"_
 * diagnostic plots with 2 rows, on the second showing random section in great detail, e.g. 10 s of nonempty signal
 * add outlier removal to the readme example
 * export nowness % information
+* tutte le funzioni on list in input cercano di fare MEAlist
+* % of simultaneous zeroes
+
 
 ### advanced wishlist
 * export long vector plots
