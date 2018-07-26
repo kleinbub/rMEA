@@ -13,7 +13,7 @@ is.MEA(x)
 \arguments{
 \item{dataframe}{a data frame with 2 columns containing MEA data respectively for subject 1 (s1) and subject 2 (s2).}
 
-\item{sampRate}{integer. The sampling rate of the MEA data. Normally derived from the framerate of the analyzed video sequence (frames per second; fps)}
+\item{sampRate}{integer. The sampling rate of the MEA data. Normally derived from the framerate of the analyzed video sequence (frames per second; fps).}
 
 \item{filter}{a string describing the pre-processing that has been applied on the raw data.}
 
@@ -23,9 +23,11 @@ is.MEA(x)
 
 \item{group}{a string naming the group the dyad belongs to, such as diagnostic group, clinic, etc.}
 
-\item{s1Name}{a string naming subject 1}
+\item{s1Name}{a string naming subject 1.}
 
-\item{s2Name}{a string naming subject 2}
+\item{s2Name}{a string naming subject 2.}
+
+\item{uid}{a string providing a unique identifier of the file. By default 'group_id_session'.}
 
 \item{x}{object to be tested.}
 }

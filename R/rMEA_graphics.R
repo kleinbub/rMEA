@@ -415,7 +415,7 @@ diagnosticPlot = function(mea,width=60,...){
 #' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
 #' One of "sync", "pace", "zero", "lead", "pace0", "lead0".
 #' @param rescale logical. Should the motion energy time-series be rescaled?
- #' @param ... further arguments passed to \code{plot}
+ #' @param ... further arguments passed to \code{\link[graphics]{plot}}
 #'
 #' @details Note: if more of than 10s of trailing zeroes are found at the end of both s1 and s2 signals they are truncated.
 #' @examples
@@ -530,6 +530,114 @@ plot.MEA = function(x, from=0, to = NULL, duration=NULL, ccf=F, rescale =F,... )
   if(!is.null(ccf)) legend_labs = c(legend_labs, paste0("CCF",ccf_lab))
   graphics::legend(length(all)/2,myYlim[1]-myYlim[2]*0.05 ,xjust = 0.5,legend=legend_labs,lwd=resPar$lwd,col = resPar$col, bty = "n",horiz=T,cex =1.3,lty=resPar$lty)
   graphics::par(origPar)
+}
+
+
+#' Adds lines of a \code{MEA} object to a Plot
+#'
+#'
+#'
+#' @param x an object of class \code{MEA} (see function \code{\link{readMEA}}).
+#' @param from either an integer or a string in the format hh:mm:ss or mm:ss representing the starting second.
+#' @param to if \code{duration} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the ending second.
+#' @param duration if \code{to} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the amount of seconds to be plotted.
+#' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
+#' One of "sync", "pace", "zero", "lead", "pace0", "lead0".
+#' @param rescale logical. Should the motion energy time-series be rescaled?
+#' @param ... further arguments passed to \code{\link[graphics]{lines}}
+#'
+#' @details Note: if more of than 10s of trailing zeroes are found at the end of both s1 and s2 signals they are truncated.
+#' @examples
+#' ## read a single file
+#' path_normal <- system.file("extdata/normal/200_01.txt", package = "rMEA")
+#' mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
+#'                      s1Name = "Patient", s2Name = "Therapist", skip=1,
+#'                      idOrder = c("id","session"), idSep="_")
+#' mea_normal <- MEAccf(mea_normal, lagSec = 5, winSec = 30, incSec = 10, ABS = FALSE)
+#' mea_smoothed <- MEAsmooth(mea_normal)
+#' ## Visual inspection of the data
+#' plot(mea_normal[[1]], from = 240, duration=20)
+#' lines(mea_smoothed[[1]], from = 240, duration=20, lty=3, col=c(1,2))
+#' @export
+#'
+lines.MEA = function(x, from=0, to = NULL, duration=NULL, ccf=F, rescale =F,... ){
+  #### debug
+  # mea = mea3$all_38508_8
+  # width = 60
+  #######
+  mea = x
+  sampRate = attr(mea,"sampRate")
+  from = timeMaster(from, out="sec") * sampRate +1
+  if(!missing(to)){
+    if(!missing(duration)) stop("'duration' and 'to' cannot be both specified.",call.=F)
+    to = timeMaster(to, out="sec") * sampRate
+  } else if(!missing(duration)) {
+    duration = timeMaster(duration, out="sec") * sampRate
+    to = min(from + duration, nrow(mea$MEA))
+  } else {
+    to = nrow(mea$MEA)
+  }
+
+  if(to<from) stop("'to' cannot be smaller than 'from'",call.=F)
+  #find last nonzero value
+  if(to==nrow(mea$MEA)){
+    zeroes = apply(mea$MEA,1,sum)
+    i=length(zeroes)
+    k=zeroes[i]
+    while(k == 0){
+      i = i-1
+      k = zeroes[i]
+    }
+    end = i + min(10*sampRate-1, 10*sampRate-1) #aggiungi max 10 secondi di zero alla fine
+  } else end = to
+
+  # get intervals
+  all = from:to
+  s1 = mea$MEA[all,1]
+  s2 = mea$MEA[all,2]
+  if(rescale){
+    s1 = rangeRescale(s1,0,1)
+    s2 = rangeRescale(s2,0,1)
+  }
+  myYlim= c(min(s1,s2,na.rm = T),max(s1,s2,na.rm = T))
+  myYlim[1] = myYlim[1]-myYlim[2]*0.05
+
+  colz = c(mycolz(2), "red")
+
+  #add ccf
+  if(!is.logical(ccf)){
+    if(is.null(x$ccf)) stop("The 'mea' object does not have a CCF. Please run MEAccf()" )
+    if(!ccf %in% names(mea$ccfRes)) stop("'ccf value not recognized. It should be one of ",paste(names(mea$ccfRes),collapse = ", " ),call.=F)
+    ccf_lab = ccf
+    ccf = list(data.frame(x$ccfRes[[ccf]]))
+    if(any(stats::na.omit(ccf[[1]]) < 0)) ABS = F else ABS = T
+    ccf = unlist(winInter(ccf, winSec = attr(x,"ccf")$win, incSec =attr(x,"ccf")$inc, sampRate = attr(x,"sampRate")))
+    ccf = ccf[all]
+
+    if(!ABS){ ccf = c(ccf,-1,1)
+    } else {ccf=c(ccf,0,1)}
+    ccf = rangeRescale(ccf,0,myYlim[2])
+    ccf = ccf[1:(length(ccf)-2)]
+  } else ccf = NULL
+
+  defPar = list(x = s1, col = colz, lty = c(1, 1, 3), lwd = c(2, 2, 2))
+
+  resPar = dotsList(defPar,...)
+  # print(resPar)
+  #recycle parameters
+  for(k in c("lty","lwd","col")){if(length(resPar[[k]])<3) resPar[[k]] = rep(resPar[[k]], length.out=3) }
+  graphics::lines(s1, col=resPar$col[1],lwd = resPar$lwd[1], lty=resPar$lty[1])
+  graphics::lines(s2, col=resPar$col[2],lwd = resPar$lwd[2], lty=resPar$lty[2])
+  if(!is.null(ccf)){
+    graphics::lines(ccf,col=resPar$col[3],lwd = resPar$lwd[3] ,lty=resPar$lty[3])
+  }
+  if(!is.null(ccf)){
+    if(ABS){
+      graphics::abline(h=0, lwd=1,lty=3)
+      graphics::text( 0,-0.3, "ccf = 0")
+    }    else {graphics::abline(h=myYlim[2]/2, lwd=1,lty=3)
+      graphics::text(0, myYlim[2]/2-0.3, "ccf = 0")}
+  }
 }
 
 # #' Plots all MEA signals contained in an object of class \code{MEAlist}

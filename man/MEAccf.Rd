@@ -25,7 +25,7 @@ The function returns a copy of the \code{mea} object which includes a cross-corr
 \description{
 This function analyzes a bivariate MEA signal represented by two time-series (subject 1 "s1", subject 2 "s2") resulting from a dyadic interaction.
 MEAccf performs windowed cross-correlations with specified increments. The cross-correlation analysis is repeated for each
-lag step, with discrete increments of 1 second in both directions.
+lag step, with discrete increments of 1 sample in both directions.
 }
 \details{
 The choice of \code{lagSec} depends on the type of synchronization expected from the specific interaction. In the literature, lags of ±5 seconds have been reported by multiple authors.
