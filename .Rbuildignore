@@ -6,4 +6,5 @@
 ^TODO\.Rmd$
 ^TODO\.html$
 ^LICENCE$
+^changelog.*$
 

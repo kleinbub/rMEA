@@ -151,7 +151,7 @@ diagnosticPlot(mea_all[[1]])
 ![](tools/readme/README-example-1.png)
 
 ``` r
-plot(mea_all[[1]], from=3500, to=5500)
+plot(mea_all[[1]], from=1, to=200)
 ```
 
 ![](tools/readme/README-example-2.png)
@@ -194,7 +194,7 @@ mea_random_ccf <- MEAccf(mea_random, lagSec= 5, winSec = 30, incSec=10, ABS = F)
 ## Visualize results
 
 # Raw data of the first session with running lag-0 ccf
-plot(mea_ccf[[1]], from=3500, to=5500, ccf = "lag_zero")
+plot(mea_ccf[[1]], from=100, to=300, ccf = "lag_zero")
 ```
 
 ![](tools/readme/README-example-3.png)
