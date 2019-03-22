@@ -4,13 +4,16 @@
 \alias{MEAheatmap}
 \title{Plot a heatmap of dyadic cross-correlations}
 \usage{
-MEAheatmap(mea, legendSteps = 10, colors = c("#F5FBFF", "#86E89E",
-  "#FFF83F", "#E8A022", "#FF3700"), bias = 1)
+MEAheatmap(mea, legendSteps = 10, rescale = FALSE,
+  colors = c("#F5FBFF", "#86E89E", "#FFF83F", "#E8A022", "#FF3700"),
+  bias = 1)
 }
 \arguments{
 \item{mea}{an object of class \code{MEA} (see function \code{\link{readMEA}}).}
 
 \item{legendSteps}{integer. the number of levels used for the color-coding of the legend.}
+
+\item{rescale}{logical. If True, the color range will represent the minimum and maximum of the data. Otherwise the theoretical correlation range -1 to 1.}
 
 \item{colors, bias}{optional arguments passed to \code{\link[grDevices]{colorRampPalette}}.}
 }

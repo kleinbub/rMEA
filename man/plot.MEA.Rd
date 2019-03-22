@@ -4,8 +4,8 @@
 \alias{plot.MEA}
 \title{Plots an object of class \code{MEA}}
 \usage{
-\method{plot}{MEA}(x, from = 0, to = NULL, duration = NULL, ccf = F,
-  rescale = F, ...)
+\method{plot}{MEA}(x, from = 0, to = NULL, duration = NULL,
+  ccf = F, rescale = F, ...)
 }
 \arguments{
 \item{x}{an object of class \code{MEA} (see function \code{\link{readMEA}}).}

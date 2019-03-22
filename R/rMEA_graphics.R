@@ -8,9 +8,29 @@ dotsList = function(parList, ...){
   dots
 }
 
-rangeRescale <- function(x, rangeMin, rangeMax){
+# rangeRescale <- function(x, rangeMin, rangeMax){
+#   (rangeMax-rangeMin) * (
+#     (x - min(x, na.rm=T))  / (max(x, na.rm=T) - min(x, na.rm=T) )
+#   ) + rangeMin
+# }
+
+
+rangeRescale <- function(x, rangeMin, rangeMax, xmin =min(x, na.rm=T), xmax = max(x, na.rm=T), pres.signs=FALSE){
+  #rangeMin e rangeMax indicano il minimo e il massimo della nuova scala
+  #
+  #se xmin e xmax mancano, vengono usati il minimo e il massimo del campione
+  if(any(x>xmax, na.rm=T) || any(x<xmin, na.rm=T)) stop ("Value found outside xmax and ymin boundaries. xmax and xmin should be equal or larger than the data range.")
+  if(pres.signs){
+    # if((!missing(xmin) && !missing(xmax)) || (xmin!=-max(abs(x)) || xmax != max(abs(x)) ) )
+    #   stop("Either x")
+    if( rangeMin != -rangeMax )
+      stop("with pres.sign = TRUE, rangeMin and rangeMax should be opposites (e.g. -1 and 1")
+    mightyMax = max(abs(xmax),abs(xmin)) #così centra qualsiasi range?
+    xmin = -mightyMax
+    xmax = mightyMax
+  }
   (rangeMax-rangeMin) * (
-    (x - min(x, na.rm=T))  / (max(x, na.rm=T) - min(x, na.rm=T) )
+    (x - xmin)  / (xmax - xmin )
   ) + rangeMin
 }
 
@@ -147,7 +167,9 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
                     max(c(unlist(mean_lags,recursive = T), 0.22),na.rm=T) )
 
   defPar = list(type="n",ylim=myYlim, xlim=c(min(ran), max(ran)), col=c(colz, "gray40" ), xaxt="n",bty='n',     #neu standard y-achse
-                main="Cross correlation of real and contrast dyads", ylab=attr(mea,"ccf")$filter ,xlab="Lag (seconds)")
+                main="Cross correlation of real and contrast dyads", ylab=attr(mea,"ccf")$filter ,
+                xlab=paste(attr(mea,"s2Name"),"leading    <<< ------   simultaneous  ------ >>>    ",attr(mea,"s1Name"),"leading\nLag (seconds)"))
+
   resPar = dotsList(defPar,...)
   for(k in c("col")){if(length(resPar[[k]])<3) resPar[[k]] = rep(resPar[[k]], length.out=length(groups)+1) }
 
@@ -696,20 +718,22 @@ mycolz = function(n,demo=F,alpha=1){
 #'
 #' @param mea an object of class \code{MEA} (see function \code{\link{readMEA}}).
 #' @param legendSteps integer. the number of levels used for the color-coding of the legend.
+#' @param rescale logical. If True, the color range will represent the minimum and maximum of the data. Otherwise the theoretical correlation range -1 to 1.
 #' @param colors,bias optional arguments passed to \code{\link[grDevices]{colorRampPalette}}.
 #'
 #' @details The cross-correlation values are rescaled to be in a range from 0 to 1 before plotting.
 #' @export
 
-MEAheatmap  = function(mea, legendSteps = 10, colors = c("#F5FBFF","#86E89E","#FFF83F","#E8A022","#FF3700"), bias =1){
+MEAheatmap  = function(mea, legendSteps = 10, rescale = FALSE, colors = c("#F5FBFF","#86E89E","#FFF83F","#E8A022","#FF3700"), bias =1){
   if(!is.MEA(mea) || is.null(mea$ccf)) stop("Only MEA objects with ccf analysis can be plotted by this function.",call.=F)
   ABS = !any(mea$ccf<0) #do we have negative numbers?
   mat = mea$ccf
-  # mat = rangeRescale(mea$ccf,0,1)
-  mat = mea$ccf/max(mea$ccf,na.rm=T)
-  # colfunc <- grDevices::colorRampPalette(c("#CEFFDA","#00ACE8", "#E80080","#FF2D0B"), bias=1)
-  # colors = c("#F5FBFF","#86E89E","#FFF83F","#E8A022","#FF3700")
-  #my_colors =c("#ffffff", "#CEFFDA","#00ACE8", "#E80080","#FF2D0B")
+  if(grep("z",attributes(mea)$ccf$filter)) mat = tanh(mat) #revert fisher's z transform to have -1:1 range
+  if(rescale){
+    if(ABS) mat = rangeRescale(mat, 0,1)
+    else    mat = rangeRescale(mat,-1,1)
+  }
+
   sampRate = attr(mea,"sampRate")
 
   if(ABS){
@@ -721,12 +745,7 @@ MEAheatmap  = function(mea, legendSteps = 10, colors = c("#F5FBFF","#86E89E","#F
   }
   colz = colfunc(legendSteps)
   colz = c(colz,"#aaaaaa") #colore degli NA
-  ##demo colz
-  # graphics::pie(bins,col=colz)
-  # graphics::rect(graphics::par("usr")[1],graphics::par("usr")[3],graphics::par("usr")[2],graphics::par("usr")[4],col = "gray")
 
-
-  # plotH = 1000
   plotH = ncol(mat)
   plotW = nrow(mat)
   leg_area = 1/5*plotW #legend area
@@ -800,10 +819,11 @@ MEAheatmap  = function(mea, legendSteps = 10, colors = c("#F5FBFF","#86E89E","#F
     seq(leg_y1+leg_incr,leg_y2, by=leg_incr),
     col = colz, border = legend_border
   )
-  graphics::text(leg_x2, c(na_y2/2,label_0,label_1), labels = c("NA",ifelse(ABS,0,-1),1),cex = 1.5,pos=4)
-  if(!ABS){
-    graphics::text(leg_x2, label_00, labels = "0",cex = 1.5,pos=4)
 
-  }
+  if(rescale)
+    graphics::text(leg_x2, c(na_y2/2,label_0,label_1), labels = c("NA",min(mea$ccf,na.rm=T),max(mea$ccf,na.rm=T)),cex = 1.5,pos=4)
+  else
+    graphics::text(leg_x2, c(na_y2/2,label_0,label_1), labels = c("NA",ifelse(ABS,0,-1),1),cex = 1.5,pos=4)
+
 }
 

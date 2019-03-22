@@ -15,7 +15,7 @@ MEAccf(mea, lagSec, winSec, incSec, r2Z = T, ABS = T)
 
 \item{incSec}{an integer specifying the step size (in seconds) between successive windows. Values lower than \code{winSec} result in overlapping windows.}
 
-\item{r2Z}{logical. The default value TRUE applies Fisher's r to Z transformation to all computed correlations.}
+\item{r2Z}{logical. The default value TRUE applies Fisher's r to Z transformation (inverse hyperbolic tangent function) to all computed correlations.}
 
 \item{ABS}{logical. The default value TRUE transforms the (Fisher's Z-transformed) correlations to absolute values.}
 }

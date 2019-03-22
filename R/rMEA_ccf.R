@@ -8,7 +8,7 @@
 #' @param lagSec an integer specifying the maximum number of lags (in seconds) for which the time-series will be shifted forwards and backwards.
 #' @param winSec an integer specifying the cross-correlation window size (in seconds).
 #' @param incSec an integer specifying the step size (in seconds) between successive windows. Values lower than \code{winSec} result in overlapping windows.
-#' @param r2Z logical. The default value TRUE applies Fisher's r to Z transformation to all computed correlations.
+#' @param r2Z logical. The default value TRUE applies Fisher's r to Z transformation (inverse hyperbolic tangent function) to all computed correlations.
 #' @param ABS logical. The default value TRUE transforms the (Fisher's Z-transformed) correlations to absolute values.
 #'
 #' @details The choice of \code{lagSec} depends on the type of synchronization expected from the specific interaction. In the literature, lags of ±5 seconds have been reported by multiple authors.
@@ -155,7 +155,7 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
 }
 
 fisher.r2z <- function(r) {
-  r = 0.5 * (log(1+r) - log(1-r))
+  r = atanh(r) # == 0.5 * (log(1+r) - log(1-r))
   r[r >  10] =  10
   r[r < -10] = -10
   r
