@@ -7,7 +7,7 @@
   * improved fisher's transform performance
   * updated rangeRescale function
   * fixed minor bug in heatmap scaling
-  * added heatmap "rescal" parameter to highlight small trends in data
+  * added heatmap "rescale" parameter to highlight small trends in data
   * improved axis label in various plots
   * plot.MEA can now use "duration" instead of "to"
   * various minor bug fixes

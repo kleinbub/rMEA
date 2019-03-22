@@ -20,7 +20,7 @@
 #'   If the filenames contains other data the character "x" can be used to skip a position.
 #'   If NA, no attempt to identify cases will be done.
 #' @param idSep character vector (or object which can be coerced to such) containing regular expression(s).
-#'   If idOrder is not NA, this will be used as separator to split the filenameas and identify "id", "session", and "group"
+#'   If idOrder is not NA, this will be used as separator to split the filenames and identify "id", "session", and "group"
 #'   informations.
 #' @param removeShortFiles Either NULL or an number ranging from 0 to 1.
 #'  Specifies the proportion of the average file length below which a file should be excluded.
