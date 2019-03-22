@@ -1,4 +1,8 @@
-## Update
+## Resubmission
+per Dr. Ligges instructions
+reverted license definition in DESCRIPTION
+
+## Submission description
 This is an update 
 it contains minor fixes and improved usability, documentation and plotting tools.
 

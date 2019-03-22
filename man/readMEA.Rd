@@ -32,7 +32,7 @@ If the filenames contains other data the character "x" can be used to skip a pos
 If NA, no attempt to identify cases will be done.}
 
 \item{idSep}{character vector (or object which can be coerced to such) containing regular expression(s).
-If idOrder is not NA, this will be used as separator to split the filenameas and identify "id", "session", and "group"
+If idOrder is not NA, this will be used as separator to split the filenames and identify "id", "session", and "group"
 informations.}
 
 \item{removeShortFiles}{Either NULL or an number ranging from 0 to 1.

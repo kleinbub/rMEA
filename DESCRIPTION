@@ -9,7 +9,7 @@ Description: A suite of tools useful to read, visualize and export bivariate mot
 URL: https://github.com/kleinbub/rMEA http://www.psync.ch 
 BugReports: https://github.com/kleinbub/rMEA/issues
 Imports: grDevices, graphics, methods, stats, utils
-License: file LICENSE
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1

@@ -6,6 +6,6 @@
 ^cran-comments\.md$
 ^TODO\.Rmd$
 ^TODO\.html$
-^LICENCE$
+^LICENSE$
 ^changelog.*$
 
