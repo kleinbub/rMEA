@@ -125,10 +125,12 @@ uid.default <- function(mea){
 #'
 #' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param type A character vector defining which ccf must be extracted.
-#' Either "matrix", one of the ccfRes indexes identified with \code{\link{ccfResNames}}
+#' Either "matrix", "fullMatrix", one of the ccfRes indexes identified with \code{\link{ccfResNames}}
 #' or the name of one lag value which can be identified with \code{\link{lagNames}}
 #'
-#' @return If \code{type="matrix"}, the whole ccf matrix is returned. Otherwise a vector containing the ccf
+#' @return If \code{type="matrix"}, the ccf matrix with discrete lag-seconds is returned.
+#' If \code{type="fullMatrix"}, the whole ccf matrix with all lags is returned.
+#'  Otherwise a vector containing the ccf
 #' time-series for the selected lag, or aggregated values is returned.
 #' If \code{mea} is a list, the return value is a list of the individual ccf of each MEA object.
 #' @export
@@ -144,6 +146,9 @@ getCCF.MEA <- function (mea, type) {
   } else if (type %in% names(mea$ccfRes)) {
     return (mea$ccfRes[[type]])
   } else if (type == "matrix") {
+    l = attr(mea,which = "ccf")$lag
+    return (mea$ccf[paste0("lag",seq(-l,l))])
+  } else if (type == "fullMatrix") {
     return (mea$ccf)
   } else stop ("'type' must be either \"matrix\", a lag label extracted with lagNames(), or one of:\r\n\"",paste0(ccfResNames(mea),collapse = "\", \""),"\"", call.=F)
 }
@@ -151,7 +156,9 @@ getCCF.MEA <- function (mea, type) {
 getCCF.default <- function (mea, type) {
   if (is.list(mea)) mea = MEAlist(mea)
   mea <- MEAlist(mea)
-  sapply(mea, getCCF, type)
+  if(type=="grandAver"){
+    sapply(mea, getCCF, type)
+  } else  lapply(mea, getCCF, type)
 }
 
 
