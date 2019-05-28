@@ -456,7 +456,7 @@ diagnosticPlot = function(mea,width=60,...){
 #'
 #' @export
 #'
-plot.MEA = function(x, from=0, to = NULL, duration=NULL, ccf=F, rescale =F,... ){
+plot.MEA = function(x, from = 0, to = NULL, duration = NULL, ccf = F, rescale = F, ... ){
   #### debug
   # mea = mea3$all_38508_8
   # width = 60
@@ -539,7 +539,7 @@ plot.MEA = function(x, from=0, to = NULL, duration=NULL, ccf=F, rescale =F,... )
       graphics::abline(h=0, lwd=1,lty=3)
       graphics::text( 0,-0.3, "ccf = 0")
     }    else {graphics::abline(h=myYlim[2]/2, lwd=1,lty=3)
-      graphics::text(0, myYlim[2]/2-0.3, "ccf = 0")}
+      graphics::text(0, myYlim[2]/2, "ccf = 0")}
   }
 
   graphics::axis(2)
@@ -564,7 +564,7 @@ plot.MEA = function(x, from=0, to = NULL, duration=NULL, ccf=F, rescale =F,... )
 #' @param to if \code{duration} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the ending second.
 #' @param duration if \code{to} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the amount of seconds to be plotted.
 #' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
-#' One of "sync", "pace", "zero", "lead", "pace0", "lead0".
+#' One of all_lags, "s1_lead", "s2_lead", "lag_zero", "s1_lead_0", "s2_lead_0."
 #' @param rescale logical. Should the motion energy time-series be rescaled?
 #' @param ... further arguments passed to \code{\link[graphics]{lines}}
 #'

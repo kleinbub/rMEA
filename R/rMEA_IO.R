@@ -244,16 +244,19 @@ readMEA = function(
 
 }
 
-
 #' Exports analyzed MEA data to .txt files
 #'
 #' @param mea an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})
 #' @param save.directory a character string naming a directory
-#' @param mea_data logical. Should the (filtered) MEA data be included in the export
-#' @param ccf_data logical. Should the cross correlation results be exported?
+#' @param what a character vector defining what has to be exported. Can be one of 'mea' or 'ccf' Should the (filtered) MEA data be included in the export
 #' @param ...  further arguments passed to \code{\link[utils]{write.table}}
 #'
-#' @details If both \code{mea_data} and \code{ccf_data} are \code{TRUE}, the cross-correlation data will be linearly interpolated to match the sampling rate of MEA data.
+#' @details 'mea' exports the filtered MEA data. 'ccf' instead exports the cross-correlation matrix together with summarizing statistics.
+#'  Available summarizing statistics are:
+#'  "all_lags": the sum of all lags for each window (row)
+#'  "s1_lead" the sum of negative lags for each window (row)
+#'  "s2_lead" the sum of positive lags for each window (row)
+#'  "bestLag" the maximum correlation value for each window (row)
 #'
 #' @export
 #' @examples
@@ -273,14 +276,14 @@ readMEA = function(
 #'
 #' ## export data and analysis
 #' save_path = tempdir()
-#' writeMEA(mea_ccf, save.directory = save_path, mea_data = TRUE, ccf_data = TRUE)
+#' writeMEA(mea_ccf, save.directory = save_path, what="ccf")
 #'}
-writeMEA <- function(mea, save.directory, mea_data, ccf_data, ...){
+writeMEA <- function(mea, save.directory, what=c("mea", "ccf"), ...){
   UseMethod("writeMEA",mea)
 }
 
 #' @export
-writeMEA.MEA <-  function(mea, save.directory, mea_data=T, ccf_data=T, ...){
+writeMEA.MEA <-  function(mea, save.directory, what=c("mea", "ccf"), ...){
   ###DEBUG
   # mea = mea3$all_38508_1
   # save.directory = "/Users/kleinbub/Desktop"
@@ -289,27 +292,20 @@ writeMEA.MEA <-  function(mea, save.directory, mea_data=T, ccf_data=T, ...){
 
   if(!methods::is(mea,"MEA")) stop("Only objects of class MEA can be processed by this function")
   if(!file.exists(save.directory)){stop("save.directory must be an existing directory")}
-  if(mea_data){
+  what = match.arg(what)
+  if(what == "mea"){
     Q = mea$MEA
   }
-  if(ccf_data){
-    if(is.null(mea$ccf)) stop("No CCF calculation was found. Set ccf_data to FALSE, or run MEAccf()",call. = F)
-    if(mea_data){
-      Qccf = winInter(list(mea$ccf),winSec = attr(mea,"ccf")$win, incSec = attr(mea,"ccf")$inc,sampRate = attr(mea,"sampRate"))[[1]]
-    } else {
-      Qccf = mea$ccf
-    }
+  else if(what == "ccf"){
+    if(is.null(mea$ccf)) stop("No CCF calculation was found. Please run MEAccf() function before",call. = F)
+    Qccf = mea$ccf
     origCols = ncol(Qccf)
     lag0 = which(colnames(Qccf)=="lag0")
-    Qccf$grandAverage = apply(Qccf[1:origCols],1,mean,na.rm=T)
-    Qccf$leading = apply(Qccf[1:(lag0-1)],1,mean,na.rm=T)
-    Qccf$pacing =  apply(Qccf[(lag0+1):origCols],1,mean,na.rm=T)
+    Qccf$all_lags = apply(Qccf[1:origCols],1,mean,na.rm=T)
+    Qccf$s1_lead = apply(Qccf[1:(lag0-1)],1,mean,na.rm=T)
+    Qccf$s2_lead =  apply(Qccf[(lag0+1):origCols],1,mean,na.rm=T)
     Qccf$bestLag = apply(Qccf[1:origCols],1,  function(r){best = which.max(r); ifelse(length(best)!=0,as.numeric(gsub("lag","", names(best))), NA) }) #this may require a smoothing function
-    if(mea_data){
-      Q = unequalCbind(Q,Qccf)
-    } else {
-      Q = Qccf
-    }
+    Q = Qccf
   }
   dots <-  list(...)
   if(!"row.names" %in% names(dots)) dots[["row.names"]]=FALSE
@@ -318,15 +314,17 @@ writeMEA.MEA <-  function(mea, save.directory, mea_data=T, ccf_data=T, ...){
 }
 
 #' @export
-writeMEA.MEAlist <-  function(mea, save.directory, mea_data, ccf_data, ...){
+writeMEA.MEAlist <-  function(mea, save.directory, what=c("mea", "ccf"), ...){
   nFiles= length(mea)
   cat("Exporting",nFiles,"dyads\r\n")
   Map(function(iMEA,i){
     prog(i,nFiles);
-    writeMEA(iMEA,save.directory,mea_data,ccf_data,...)
+    writeMEA(iMEA,save.directory,what,...)
   }, mea, seq_along(mea))
   invisible()
 }
+
+
 
 
 
