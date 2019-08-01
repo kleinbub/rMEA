@@ -1,5 +1,9 @@
 # rMEA
 
+### v1.1.0.9001
+  * improved MEAdistplot() to support single session groups
+  * fixed a bug in MEAdistplot for plotting single groups
+
 ### v1.1.0 
 [2019/03/22] Yearly update to CRAN 
 

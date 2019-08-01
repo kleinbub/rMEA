@@ -10,11 +10,13 @@ getCCF(mea, type)
 \item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
 
 \item{type}{A character vector defining which ccf must be extracted.
-Either "matrix", one of the ccfRes indexes identified with \code{\link{ccfResNames}}
+Either "matrix", "fullMatrix", one of the ccfRes indexes identified with \code{\link{ccfResNames}}
 or the name of one lag value which can be identified with \code{\link{lagNames}}}
 }
 \value{
-If \code{type="matrix"}, the whole ccf matrix is returned. Otherwise a vector containing the ccf
+If \code{type="matrix"}, the ccf matrix with discrete lag-seconds is returned.
+If \code{type="fullMatrix"}, the whole ccf matrix with all lags is returned.
+ Otherwise a vector containing the ccf
 time-series for the selected lag, or aggregated values is returned.
 If \code{mea} is a list, the return value is a list of the individual ccf of each MEA object.
 }

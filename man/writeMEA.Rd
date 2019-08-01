@@ -4,16 +4,14 @@
 \alias{writeMEA}
 \title{Exports analyzed MEA data to .txt files}
 \usage{
-writeMEA(mea, save.directory, mea_data, ccf_data, ...)
+writeMEA(mea, save.directory, what = c("mea", "ccf"), ...)
 }
 \arguments{
 \item{mea}{an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})}
 
 \item{save.directory}{a character string naming a directory}
 
-\item{mea_data}{logical. Should the (filtered) MEA data be included in the export}
-
-\item{ccf_data}{logical. Should the cross correlation results be exported?}
+\item{what}{a character vector defining what has to be exported. Can be one of 'mea' or 'ccf' Should the (filtered) MEA data be included in the export}
 
 \item{...}{further arguments passed to \code{\link[utils]{write.table}}}
 }
@@ -21,7 +19,12 @@ writeMEA(mea, save.directory, mea_data, ccf_data, ...)
 Exports analyzed MEA data to .txt files
 }
 \details{
-If both \code{mea_data} and \code{ccf_data} are \code{TRUE}, the cross-correlation data will be linearly interpolated to match the sampling rate of MEA data.
+'mea' exports the filtered MEA data. 'ccf' instead exports the cross-correlation matrix together with summarizing statistics.
+ Available summarizing statistics are:
+ "all_lags": the sum of all lags for each window (row)
+ "s1_lead" the sum of negative lags for each window (row)
+ "s2_lead" the sum of positive lags for each window (row)
+ "bestLag" the maximum correlation value for each window (row)
 }
 \examples{
 \donttest{
@@ -40,6 +43,6 @@ mea_ccf = MEAccf(mea_normal, lagSec = 5, winSec = 60, incSec = 30, r2Z = TRUE, A
 
 ## export data and analysis
 save_path = tempdir()
-writeMEA(mea_ccf, save.directory = save_path, mea_data = TRUE, ccf_data = TRUE)
+writeMEA(mea_ccf, save.directory = save_path, what="ccf")
 }
 }

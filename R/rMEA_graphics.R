@@ -272,6 +272,7 @@ MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
   } else if(is.list(contrast) && all(sapply(contrast,is.MEA))){
     boot = MEAlist(contrast)
     if(!hasCCF(boot)) stop("'contrast' object had no valid CCF informations. Refer to function MEAccf()", call.=F)
+    if(length(boot) < 2) stop("'contrast' object must contain at least two MEA objects");
     contrast = T
     if(length(attr(boot,"groups"))>1 ){
       boot = setGroup(boot, "Contrast")
@@ -293,7 +294,7 @@ MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
 
   #generate data
   grandAver = lapply(glist, function(iMea) sapply(iMea,function(x)x$ccfRes$grandAver ))
-  dreal = lapply(grandAver, stats::density)
+  dreal = lapply(grandAver, function(x){if(length(x)==1) list("x"=x, "y"=NA) else stats::density(x)})
   cohs = list()
   if(contrast){
     bgrandAver = sapply(boot,function(x)x$ccfRes$grandAver )
@@ -305,16 +306,15 @@ MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
     dboot = list(x=NULL,y=NULL)
     if(length(groups)==2)
       cohs[[1]] = paste0("Cohen's d = ", round(cohens_d(grandAver[[1]],grandAver[[2]]),2 ))
-    else if(length(groups==3)){
+    else if(length(groups)==3){
       shortGroups = substr(groups, 1, 4)
       cohs[[1]] = paste0(shortGroups[1],"-",shortGroups[2]," d = ", round(cohens_d(grandAver[[1]],grandAver[[2]]),2 ))
       cohs[[2]] = paste0(shortGroups[1],"-",shortGroups[2]," d = ", round(cohens_d(grandAver[[2]],grandAver[[3]]),2 ))
       cohs[[3]] = paste0(shortGroups[1],"-",shortGroups[2]," d = ", round(cohens_d(grandAver[[1]],grandAver[[3]]),2 ))
     }
   }
-
-  myYlim = c(0,max(c(  dboot$y, sapply(dreal,function(x)x$y)  )))
-  myXlim = c(min(c(  dboot$x, sapply(dreal,function(x)x$x)  )),max(c(  dboot$x, sapply(dreal,function(x)x$x)  )))
+  myYlim = c(0,max(c(  dboot$y, unlist(lapply(dreal,function(x)x$y))  ),na.rm = T) )
+  myXlim = c(min(c(  dboot$x, unlist(lapply(dreal,function(x)x$x))  )),max(c(  dboot$x, unlist(lapply(dreal,function(x)x$x))  )))
 
   defPar = list(
     x = dboot,type="n",ylim=myYlim, xlim = myXlim,col=grDevices::rgb(1,0,0,0.2),  bty='n', ylab="Density",
@@ -324,7 +324,10 @@ MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
   do.call(graphics::plot, resPar)
   graphics::lines(dboot, col ="gray40", lwd=2)
   for(g in 1:length(groups)){
-    graphics::lines(dreal[[g]],col=colz[g], lwd=2)
+    if(length(dreal[[g]]$x) == 1)
+      graphics::abline(v=dreal[[g]]$x,col=colz[g], lwd=2)
+    else
+      graphics::lines(dreal[[g]],col=colz[g], lwd=2)
   }
 
   leglab = if(contrast)c(groups,attr(boot,"groups")) else groups
