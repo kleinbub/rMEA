@@ -220,7 +220,8 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
 #'
 #' @param mea a well formatted list of \code{MEA} objects (see function \code{\link{MEAlist}}).
 #' @param contrast either FALSE or a list of \code{MEA} objects to be used as a contrast
-#' @param by.group logical. Should the different groups of \code{mea} be plotted separately?
+#' @param by Either "none", "group", "id", or "session". Defines the grouping to be used.
+#' @param by.group deprecated argument. Use by="group" instead.
 #' @param ... further graphical parameters passed to  \code{\link[graphics]{plot}}
 #'
 #' @details If \code{contrast} is defined, then a normalized difference (Cohen's \emph{d}) between the means of each group and the contrast is provided.
@@ -259,13 +260,16 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
 #'}
 #' @export
 #'
-MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
+MEAdistplot = function(mea, contrast=F, by=c("none","group","id","session"), by.group=FALSE, ...) {
   #2 density
-  # mea = mea3
-  # contrast = meaR
+  # mea = d
+  # contrast = r
   # colz = c(1,2)
+  by = match.arg(by,c("none","group","id","session"))
+  if(missing(by) && by.group){message("The 'by.group' argument is deprecated and will be removed from future versions. Please use by = 'group' instead, or refer to the help page."); by = "group"}
   mea = MEAlist(mea)
   if(!hasCCF(mea)) stop("Density plot requires MEA objects with valid CCF informations. Refer to function MEAccf()", call.=F)
+
 
   if(is.logical(contrast) && contrast == F){
     contrast = F
@@ -281,14 +285,29 @@ MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
   } else stop("contrast must either be FALSE or a MEAlist object")
 
 
-  if(by.group)  mea = MEAlist(mea)  else    mea = setGroup(mea,"Original")
+  if(by=="group"){
+    mea = MEAlist(mea)
+    groups = attr(mea,"groups")
 
-  groups = attr(mea,"groups")
+  } else if(by == "id"){
+    groups = unique(id(mea))
+
+  } else if(by == "session") {
+    groups = sort(unique(unlist(lapply(mea, attr, "session"))))
+
+  } else {
+    by = "group"
+    mea = setGroup(mea,"Original")
+    groups = attr(mea,"groups")
+  }
+
+
   lagSec = attr(mea,"ccf")$lag
   colz = mycolz(length(groups))
+  # colz = grey.colors(length(groups))
   glist = list()
   for(g in groups){
-    glist[[g]] = lapply(mea,function(x){if(attr(x,"group")==g) x else NULL }) #set to NULL the meas of other groups
+    glist[[g]] = lapply(mea,function(x){if(attr(x,by)==g) x else NULL }) #set to NULL the meas of other groups
     glist[[g]] = Filter(Negate(is.null), glist[[g]])#remove null values
   }
 
@@ -322,7 +341,7 @@ MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
   )
   resPar = dotsList(defPar,...)
   do.call(graphics::plot, resPar)
-  graphics::lines(dboot, col ="gray40", lwd=2)
+  graphics::lines(dboot, col ="gray40", lwd=4,lty=3)
   for(g in 1:length(groups)){
     if(length(dreal[[g]]$x) == 1)
       graphics::abline(v=dreal[[g]]$x,col=colz[g], lwd=2)
@@ -332,15 +351,129 @@ MEAdistplot = function(mea, contrast=F, by.group=T, ...) {
 
   leglab = if(contrast)c(groups,attr(boot,"groups")) else groups
   legcol = if(contrast)c(colz,"gray40") else colz
-  graphics::legend("topright", legend=leglab, col=legcol,lty=1,lwd = 2 ,bty='n')
+  legLTY = c(rep(1,length(groups)),3)
+  legLWD = c(rep(2,length(groups)),4)
+  graphics::legend("topright", legend=leglab, col=legcol,lty=legLTY,lwd = legLWD ,bty='n')
 
   if(length(cohs)>0){
     if(contrast) vsLab = paste0("ES vs ",attr(boot,"groups"),": ") else vsLab = ""
-    graphics::mtext(text = paste0(vsLab, do.call(paste, c(cohs,list(sep=" | ")))) ,3,line = 0.5)
+    vsLab = paste0(vsLab, do.call(paste, c(cohs,list(sep=" | "))))
+    if(nchar(vsLab)>100){
+      vsLab = ""
+      # vsLab = gsub("(.{100})", "\\1\\\n", vsLab)
+    }
+    graphics::mtext(text = vsLab ,3,line = -5.5)
   }
 
 }
-
+#
+# MEAdistplot = function(mea, contrast=F, by=c("none","group","id","session"), by.group=FALSE, ...) {
+#   #2 density
+#   # mea = d
+#   # contrast = r
+#   # colz = c(1,2)
+#   by = match.arg(by,c("none","group","id","session"))
+#   if(missing(by) && by.group){print("ASD"); by = "group"}
+#   mea = MEAlist(mea)
+#   if(!hasCCF(mea)) stop("Density plot requires MEA objects with valid CCF informations. Refer to function MEAccf()", call.=F)
+#
+#
+#   if(is.logical(contrast) && contrast == F){
+#     contrast = F
+#   } else if(is.list(contrast) && all(sapply(contrast,is.MEA))){
+#     boot = MEAlist(contrast)
+#     if(!hasCCF(boot)) stop("'contrast' object had no valid CCF informations. Refer to function MEAccf()", call.=F)
+#     if(length(boot) < 2) stop("'contrast' object must contain at least two MEA objects");
+#     contrast = T
+#     if(length(attr(boot,"groups"))>1 ){
+#       boot = setGroup(boot, "Contrast")
+#       warning("Contrast with multiple groups is not supported. Contrast data was collapsed to a single group.",call.=F)
+#     }
+#   } else stop("contrast must either be FALSE or a MEAlist object")
+#
+#
+#   if(by=="group"){
+#     mea = MEAlist(mea)
+#     groups = attr(mea,"groups")
+#
+#   } else if(by == "id"){
+#     groups = unique(id(mea))
+#
+#   } else if(by == "session") {
+#     groups = sort(unique(unlist(lapply(mea, attr, "session"))))
+#
+#   } else {
+#     by = "group"
+#     mea = setGroup(mea,"Original")
+#     groups = attr(mea,"groups")
+#   }
+#
+#
+#   lagSec = attr(mea,"ccf")$lag
+#   colz = mycolz(length(groups))
+#   # colz = grey.colors(length(groups))
+#   glist = list()
+#   for(g in groups){
+#     glist[[g]] = lapply(mea,function(x){if(attr(x,by)==g) x else NULL }) #set to NULL the meas of other groups
+#     glist[[g]] = Filter(Negate(is.null), glist[[g]])#remove null values
+#   }
+#
+#   #generate data
+#   grandAver = lapply(glist, function(iMea) sapply(iMea,function(x)x$ccfRes$grandAver ))
+#   dreal = lapply(grandAver, function(x){if(length(x)==1) list("x"=x, "y"=NA) else stats::density(x)})
+#   cohs = list()
+#   if(contrast){
+#     bgrandAver = sapply(boot,function(x)x$ccfRes$grandAver )
+#     dboot = stats::density(bgrandAver)
+#     for(g in 1:length(groups)){
+#       cohs[[groups[g]]] = paste0(groups[g]," d = ", round(cohens_d(grandAver[[g]],bgrandAver),2 ))
+#     }
+#   } else {
+#     dboot = list(x=NULL,y=NULL)
+#     if(length(groups)==2)
+#       cohs[[1]] = paste0("Cohen's d = ", round(cohens_d(grandAver[[1]],grandAver[[2]]),2 ))
+#     else if(length(groups)==3){
+#       shortGroups = substr(groups, 1, 4)
+#       cohs[[1]] = paste0(shortGroups[1],"-",shortGroups[2]," d = ", round(cohens_d(grandAver[[1]],grandAver[[2]]),2 ))
+#       cohs[[2]] = paste0(shortGroups[1],"-",shortGroups[2]," d = ", round(cohens_d(grandAver[[2]],grandAver[[3]]),2 ))
+#       cohs[[3]] = paste0(shortGroups[1],"-",shortGroups[2]," d = ", round(cohens_d(grandAver[[1]],grandAver[[3]]),2 ))
+#     }
+#   }
+#   myYlim = c(0,max(c(  dboot$y, unlist(lapply(dreal,function(x)x$y))  ),na.rm = T) )
+#   myXlim = c(min(c(  dboot$x, unlist(lapply(dreal,function(x)x$x))  )),max(c(  dboot$x, unlist(lapply(dreal,function(x)x$x))  )))
+#
+#   defPar = list(
+#     x = dboot,type="n",ylim=myYlim, xlim = myXlim,col=grDevices::rgb(1,0,0,0.2),  bty='n', ylab="Density",
+#     main="Density of MEA average cross-correlations",xlab=paste(attr(mea,"ccf")$filter,"grand average")
+#   )
+#   resPar = dotsList(defPar,...)
+#   do.call(graphics::plot, resPar)
+#   graphics::lines(dboot, col ="gray40", lwd=4,lty=3)
+#   for(g in 1:length(groups)){
+#     if(length(dreal[[g]]$x) == 1)
+#       graphics::abline(v=dreal[[g]]$x,col=colz[g], lwd=2)
+#     else
+#       graphics::lines(dreal[[g]],col=colz[g], lwd=2)
+#   }
+#
+#   leglab = if(contrast)c(groups,attr(boot,"groups")) else groups
+#   legcol = if(contrast)c(colz,"gray40") else colz
+#   legLTY = c(rep(1,length(groups)),3)
+#   legLWD = c(rep(2,length(groups)),4)
+#   graphics::legend("topright", legend=leglab, col=legcol,lty=legLTY,lwd = legLWD ,bty='n')
+#
+#   if(length(cohs)>0){
+#     if(contrast) vsLab = paste0("ES vs ",attr(boot,"groups"),": ") else vsLab = ""
+#     vsLab = paste0(vsLab, do.call(paste, c(cohs,list(sep=" | "))))
+#     if(nchar(vsLab)>100){
+#       vsLab = ""
+#       # vsLab = gsub("(.{100})", "\\1\\\n", vsLab)
+#     }
+#     graphics::mtext(text = vsLab ,3,line = -5.5)
+#   }
+#
+# }
+#
 
 
 
@@ -729,7 +862,7 @@ mycolz = function(n,demo=F,alpha=1){
 
 MEAheatmap  = function(mea, legendSteps = 10, rescale = FALSE, colors = c("#F5FBFF","#86E89E","#FFF83F","#E8A022","#FF3700"), bias =1){
   if(!is.MEA(mea) || is.null(mea$ccf)) stop("Only MEA objects with ccf analysis can be plotted by this function.",call.=F)
-  ABS = !any(mea$ccf<0) #do we have negative numbers?
+  ABS = !any(na.omit(mea$ccf)<0) #do we have negative numbers?
   mat = mea$ccf
   if(grep("z",attributes(mea)$ccf$filter)) mat = tanh(mat) #revert fisher's z transform to have -1:1 range
   if(rescale){

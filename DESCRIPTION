@@ -1,7 +1,7 @@
 Package: rMEA
 Type: Package
 Title: Synchrony in Motion Energy Analysis (MEA) Time-Series
-Version: 1.1.0.9001
+Version: 1.1.0.9002
 Date: 2019-08-01
 Author: Johann R. Kleinbub, Fabian Ramseyer
 Maintainer: Johann R. Kleinbub <johann.kleinbub@gmail.com>

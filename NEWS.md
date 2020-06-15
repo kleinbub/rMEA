@@ -1,5 +1,9 @@
 # rMEA
 
+### v1.1.0.9002
+  * fixed a bug preventing heatmaps to be plotted with missing data
+  * improved MEAdistplot() to allow grouping by "id", "session", and "group" 
+
 ### v1.1.0.9001
   * improved MEAdistplot() to support single session groups
   * fixed a bug in MEAdistplot for plotting single groups
