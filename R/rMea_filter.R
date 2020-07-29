@@ -36,8 +36,12 @@
 MEAsmooth = function(mea, moving.average.win = 0.5){
   cat("\r\nMoving average smoothing:\r\n")
   res = MEAmap(mea, function(x){
+    na1 = which(is.na(x[[1]]))
+    na2 = which(is.na(x[[2]]))
     x[[1]] = sasFiltB(x[[1]], winSec = moving.average.win, sampRate = attr(mea,"sampRate"))
     x[[2]] = sasFiltB(x[[2]], winSec = moving.average.win, sampRate = attr(mea,"sampRate"))
+    x[[1]][na1] = NA
+    x[[2]][na2] = NA
     x
   }, label="smooth" )
 }
@@ -62,14 +66,13 @@ sasFiltB = function(a, sampRate, winSec=0.5){
 #' energy time-series to calculate a scaling factor. Default is standard deviation.
 #' @param ... further arguments passed to \code{scale} if it is a function.
 #' @param center either a logical value or a numeric vector of length 2 specifying separate centering values for s1 and s2.
+#' @param removeNA logical. If \code{scale} is a function, defines whether NAs be removed prior to calculating the scaling factor.
 #' @details If \code{scale} is a function, it is found by a call to  \code{\link[base]{match.fun}} and typically is either a function
 #' or a symbol (e.g., a backquoted name) or a character string specifying a function
-#' to be searched for from the environment of the call to apply.
-#' If a \code{na.rm} argument is present in \code{FUN}
-#' it is automatically set to TRUE.
+#' to be searched for from the environment of the call to apply. Note that the chosen function must return a single numeric value.
 #'
 #' \code{center} is directly passed to \code{\link[base]{scale}}. If \code{center} is \code{TRUE} then centering
-#' is done by subtracting the means (omitting NAs) from the motion energy time-series. If a \code{center} is a numeric vector,
+#' is done by subtracting the means (omitting NAs) from the motion energy time-series. If \code{center} is a numeric vector,
 #' the first value will be subtracted from s1 and the second from s2.
 #' Note: the s1 and s2 signals are scaled independently.
 #' @return returns the same \code{MEA} or \code{MEAlist} object, with all motion energy data rescaled
@@ -82,14 +85,11 @@ sasFiltB = function(a, sampRate, winSec=0.5){
 #'                      s1Name = "Patient", s2Name = "Therapist",
 #'                      idOrder = c("id","session"), idSep="_", skip=1, nrow = 6000)
 #'
-#' ## rescale with standard deviation
-#' mea_scaled = MEAscale(mea_raw, scale = "sd")
-#'
 #' ## rescale by factor 0.7
 #' mea_scaled = MEAscale(mea_raw, scale = 0.7)
 #'
-#' ## rescale s1
-#' mea_scaled = MEAscale(mea_raw, scale = "sd")
+#' ## rescale with standard deviation
+#' mea_scaled = MEAscale(mea_raw, scale = "sd", removeNA = TRUE)
 #'
 #' ## assign groups names
 #' mea_raw <- setGroup(mea_raw, "raw")
@@ -105,7 +105,7 @@ sasFiltB = function(a, sampRate, winSec=0.5){
 #' @export
 #'
 
-MEAscale = function(mea, scale="sd", ..., center=F){
+MEAscale = function(mea, scale="sd", ..., center=F, removeNA=T){
   cat("\r\nRescaling data:\r\n")
   if(is.numeric(scale)){
     scaleVAL = scale
@@ -117,13 +117,15 @@ MEAscale = function(mea, scale="sd", ..., center=F){
     fil = paste0("rescaled (", as.character(substitute(scale)),")" )
     if (length(fil)>1) fil = "rescaled (custom)"
     dots = list(...)
-    if("na.rm" %in%  methods::formalArgs(scaleFUN) && !"na.rm"%in% names(dots)){ #if the function allows na.rm, set it to TRUE
-      dots[["na.rm"]] = T
-    }
   }
   res = MEAmap(mea, function(x){
-    x[[1]]=base::scale(x[[1]], scale = do.call(scaleFUN, c(list(x[[1]]),dots)), center = center)
-    x[[2]]=base::scale(x[[2]], scale = do.call(scaleFUN, c(list(x[[2]]),dots)), center = center)
+    if(removeNA) {
+      scaleX1 = stats::na.omit(x[[1]]); scaleX2 = stats::na.omit(x[[2]])
+    } else {
+      scaleX1 = x[[1]]; scaleX2 = x[[2]]
+    }
+    x[[1]]=base::scale(x[[1]], scale = do.call(scaleFUN, c(list(scaleX1),dots)), center = center)
+    x[[2]]=base::scale(x[[2]], scale = do.call(scaleFUN, c(list(scaleX2),dots)), center = center)
     x
   },
   label=fil)
@@ -133,7 +135,9 @@ MEAscale = function(mea, scale="sd", ..., center=F){
 #'
 #' Sometimes motion energy analysis generates excessively high peaks resulting from video artifacts or other anomalies in the video source.
 #'
-#' This function allows to substitute the values greater or less than a specific threshold. The default threshold is 10 times the standard deviation of the time-series.
+# This function allows to substitute the values greater or less than a specific threshold. The default threshold is 10 times the standard deviation of the time-series.
+# **NOTE: As of version 1.2.0.0 this function is deprecated and may be removed in future versions.
+# Please use \code{\link{MEAthreshold}} to identify values and \code{link{MEAreplace}} to perform the substitutions**
 #'
 #' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param threshold a numeric value, or a function returning the threshold value to consider data as outliers.
@@ -153,6 +157,8 @@ MEAscale = function(mea, scale="sd", ..., center=F){
 #' mea_clean = MEAoutlier(mea_raw, threshold=function(x){sd(x)*10}, direction = "greater")
 #' @export
 MEAoutlier = function(mea, threshold=function(x){stats::sd(x)*10}, direction=c("greater", "less") ,replace=NA){
+  # message("As of version 1.2.0.0 this function is deprecated and may be removed in future versions.
+  #         Please use MEAthreshold() to identify values and MEAreplace() to perform the substitutions")
   cat0("\r\nSuppressing outliers to ",as.character(replace),":\r\n")
   direction = match.arg(direction)
   res = MEAmap(mea, function(x){
@@ -208,8 +214,20 @@ MEAmap.MEAlist = function(mea,FUN,label,...){
   if(any(!sapply(mea, is.MEA)))
     stop("Some elements in the provided MEAlist object are not of class MEA. Please try reimporting your data using readMEA()")
   res = Map(function (x,i){
+    dots = list(...)
+    #iterate and recycle items in the dots (beacuse MEAmap is not really a map() call at the MEA object level)
+    other = which(!sapply(dots, is.function))
+    for(k in seq_along(other)){
+      if (length(dots[[other[k]]] ) ==length(mea)){
+        dots[[other[k]]] = dots[[other[k]]][i]
+      } else if (length(other[[k]])==1){
+        dots[[other[k]]] = dots[[other[k]]]
+      } else stop ("... must contain either functions, or object of length 1 or of length == length(mea")
+    }
+
     prog(i,length(mea))
-    MEAmap(x,FUN,label,...)
+    do.call(MEAmap, c(list(x, FUN, label),dots))
+    # MEAmap(x,FUN,label,...)
   },mea,seq_along(mea))
   # attributes(res) = attributes(mea)
   res = MEAlist(res)

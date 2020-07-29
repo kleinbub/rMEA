@@ -21,7 +21,16 @@
 #'
 #' Using absolute values (\code{ABS}) treats positive and negative cross-correlations as equal. The underlying assumption is that both simultaneous movement (positive correlation) and when
 #' one subject accelerates and the other decelerates (negative correlation), are both signs of interrelatedness and should thus contribute equally to overall synchrony.
-#' @return The function returns a copy of the \code{mea} object which includes a cross-correlation table
+#' @return The function returns a copy of the \code{mea} object in which the \code{ccf} and \code{ccfRes} objects are populated. \code{mea$ccf} includes the complete lagged cross-correlation table
+#' for each window and each lag of S1 and S2 MEA signals. \code{mea$ccfRes} contains various aggregate values, typically used in research:
+#' * lag_zero: a numeric vector containing for each window, the non-lagged cross-correlation value.
+#' * all_lags: a numeric vector containing  for each window, the average across all lags.
+#' * s1_lead/s2_lead: a numeric vector containing for each window, the average of positive/negative lags, summing up the strenght of S1/S2 in "leading" the synchronization.
+#' * s1_lead_0/s2_lead_0: the same as s1_lead/s2_lead, but including lag_zero values in the average.
+#' * bestLag: for each window, the lag value (in seconds) that has the highest correlation value.
+#' * grandAver: a single numeric value of the grand-average of the whole cross-correlation table.
+#' * winTimes: a data frame containing the start and end times of each window in the format hh:mm:ss
+#' @md
 #' @examples ## read a single file
 #' path_normal <- system.file("extdata/normal/200_01.txt", package = "rMEA")
 #' mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
@@ -31,6 +40,10 @@
 #' ## perform ccf analysis
 #' mea_ccf = MEAccf(mea_normal, lagSec = 5, winSec = 60, incSec = 30, r2Z = TRUE, ABS = TRUE)
 #' summary(mea_ccf)
+#'
+#' ##extract ccf values
+#' res <- getCCF(mea_ccf, type="grandAver")
+#' print(res)
 #'
 #' #visualize the analysis results for the first file
 #' MEAheatmap(mea_ccf[[1]])
@@ -124,6 +137,11 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   if(r2Z) ccfmat = fisher.r2z(ccfmat)
   if(ABS) ccfmat = abs(ccfmat)
 
+  startx = timeMaster((seq_len(n_win)-1) * incSec, out="h")
+  endx   = timeMaster((seq_len(n_win)-1) * incSec + winSec, out="h")
+  timex = data.frame(start=startx, end=endx)
+  rownames(timex) = paste0("w",seq_len(n_win))
+
   # analytics
   ccfRes = list(
     "all_lags" = apply(ccfmat, 1, mean ,na.rm=T),
@@ -132,7 +150,9 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
     "lag_zero"  = ccfmat[, lagSec*sampRate+1],
     "s1_lead_0" = apply(ccfmat[, (lagSec*sampRate+1):(lagSec*sampRate*2+1)], 1, mean ,na.rm=T),
     "s2_lead_0" = apply(ccfmat[, 1:(lagSec*sampRate +1)], 1, mean ,na.rm=T),
-    "grandAver" = mean(unlist(ccfmat),na.rm=T)
+    "bestLag" = apply(ccfmat, 1,  function(r){best = which.max(r); ifelse(length(best)!=0,as.numeric(gsub("lag","", names(best))), NA) }), #this may require a smoothing function
+    "grandAver" = mean(unlist(ccfmat),na.rm=T),
+    "winTimes"  = timex
   )
   names(ccfRes$zero) = names(ccfRes$pace)
 

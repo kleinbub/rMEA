@@ -248,15 +248,11 @@ readMEA = function(
 #'
 #' @param mea an object of class \code{MEA} or \code{MEAlist} (see function \code{\link{readMEA}})
 #' @param save.directory a character string naming a directory
-#' @param what a character vector defining what has to be exported. Can be one of 'mea' or 'ccf' Should the (filtered) MEA data be included in the export
+#' @param what a character vector defining what has to be exported. Can be one of 'mea' or 'ccf'.
 #' @param ...  further arguments passed to \code{\link[utils]{write.table}}
 #'
-#' @details 'mea' exports the filtered MEA data. 'ccf' instead exports the cross-correlation matrix together with summarizing statistics.
-#'  Available summarizing statistics are:
-#'  "all_lags": the sum of all lags for each window (row)
-#'  "s1_lead" the sum of negative lags for each window (row)
-#'  "s2_lead" the sum of positive lags for each window (row)
-#'  "bestLag" the maximum correlation value for each window (row)
+#' @details 'mea' exports the (filtered) MEA data. 'ccf' instead exports the cross-correlation matrix together with all
+#' summarizing statistics calculated by \code{\link{MEAccf}}.
 #'
 #' @export
 #' @examples
@@ -299,13 +295,16 @@ writeMEA.MEA <-  function(mea, save.directory, what=c("mea", "ccf"), ...){
   else if(what == "ccf"){
     if(is.null(mea$ccf)) stop("No CCF calculation was found. Please run MEAccf() function before",call. = F)
     Qccf = mea$ccf
-    origCols = ncol(Qccf)
-    lag0 = which(colnames(Qccf)=="lag0")
-    Qccf$all_lags = apply(Qccf[1:origCols],1,mean,na.rm=T)
-    Qccf$s1_lead = apply(Qccf[1:(lag0-1)],1,mean,na.rm=T)
-    Qccf$s2_lead =  apply(Qccf[(lag0+1):origCols],1,mean,na.rm=T)
-    Qccf$bestLag = apply(Qccf[1:origCols],1,  function(r){best = which.max(r); ifelse(length(best)!=0,as.numeric(gsub("lag","", names(best))), NA) }) #this may require a smoothing function
-    Q = Qccf
+    # origCols = ncol(Qccf)
+    # lag0 = which(colnames(Qccf)=="lag0")
+    allRes = ccfResNames(mea)
+    res = do.call(cbind,mea$ccfRes[allRes])
+    Q = cbind(Qccf, res)
+    # Qccf$all_lags = apply(Qccf[1:origCols],1,mean,na.rm=T)
+    # Qccf$s1_lead = apply(Qccf[1:(lag0-1)],1,mean,na.rm=T)
+    # Qccf$s2_lead =  apply(Qccf[(lag0+1):origCols],1,mean,na.rm=T)
+    # Qccf$bestLag = apply(Qccf[1:origCols],1,  function(r){best = which.max(r); ifelse(length(best)!=0,as.numeric(gsub("lag","", names(best))), NA) }) #this may require a smoothing function
+    # Q = Qccf
   }
   dots <-  list(...)
   if(!"row.names" %in% names(dots)) dots[["row.names"]]=FALSE

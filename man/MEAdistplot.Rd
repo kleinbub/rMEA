@@ -4,14 +4,25 @@
 \alias{MEAdistplot}
 \title{Distribution of cross-correlations}
 \usage{
-MEAdistplot(mea, contrast = F, by.group = T, ...)
+MEAdistplot(
+  mea,
+  contrast = FALSE,
+  by = c("none", "group", "id", "session"),
+  by.group = FALSE,
+  sub.line = 0.5,
+  ...
+)
 }
 \arguments{
 \item{mea}{a well formatted list of \code{MEA} objects (see function \code{\link{MEAlist}}).}
 
 \item{contrast}{either FALSE or a list of \code{MEA} objects to be used as a contrast}
 
-\item{by.group}{logical. Should the different groups of \code{mea} be plotted separately?}
+\item{by}{Either "none", "group", "id", or "session". Defines the grouping to be used.}
+
+\item{by.group}{deprecated argument. Use by="group" instead.}
+
+\item{sub.line}{on which margin line should the Effect Size subtitle be printed, starting at 0 counting outwards.}
 
 \item{...}{further graphical parameters passed to  \code{\link[graphics]{plot}}}
 }

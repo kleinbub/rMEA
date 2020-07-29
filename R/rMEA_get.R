@@ -125,7 +125,7 @@ uid.default <- function(mea){
 #'
 #' @param mea an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})
 #' @param type A character vector defining which ccf must be extracted.
-#' Either "matrix", "fullMatrix", one of the ccfRes indexes identified with \code{\link{ccfResNames}}
+#' Either "matrix", "fullMatrix", one of the ccfRes indexes identified with \code{\link{ccfResNames}},
 #' or the name of one lag value which can be identified with \code{\link{lagNames}}
 #'
 #' @return If \code{type="matrix"}, the ccf matrix with discrete lag-seconds is returned.
@@ -150,7 +150,7 @@ getCCF.MEA <- function (mea, type) {
     return (mea$ccf[paste0("lag",seq(-l,l))])
   } else if (type == "fullMatrix") {
     return (mea$ccf)
-  } else stop ("'type' must be either \"matrix\", a lag label extracted with lagNames(), or one of:\r\n\"",paste0(ccfResNames(mea),collapse = "\", \""),"\"", call.=F)
+  } else stop ("'type' must be either \"matrix\", \"fullMatrix\", a lag label extracted with lagNames(), or one of:\r\n\"",paste0(ccfResNames(mea),collapse = "\", \""),"\"", call.=F)
 }
 #' @export
 getCCF.default <- function (mea, type) {

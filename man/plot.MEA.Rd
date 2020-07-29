@@ -4,8 +4,7 @@
 \alias{plot.MEA}
 \title{Plots an object of class \code{MEA}}
 \usage{
-\method{plot}{MEA}(x, from = 0, to = NULL, duration = NULL,
-  ccf = F, rescale = F, ...)
+\method{plot}{MEA}(x, from = 0, to = NULL, duration = NULL, ccf = F, rescale = F, ...)
 }
 \arguments{
 \item{x}{an object of class \code{MEA} (see function \code{\link{readMEA}}).}
@@ -21,7 +20,7 @@ One of "sync", "pace", "zero", "lead", "pace0", "lead0".}
 
 \item{rescale}{logical. Should the motion energy time-series be rescaled?}
 
-\item{...}{further arguments passed to \code{\link[graphics]{plot}}}
+\item{...}{further arguments passed to \code{\link[base]{plot}}}
 }
 \description{
 Plots an object of class \code{MEA}

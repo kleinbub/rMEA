@@ -20,7 +20,17 @@ MEAccf(mea, lagSec, winSec, incSec, r2Z = T, ABS = T)
 \item{ABS}{logical. The default value TRUE transforms the (Fisher's Z-transformed) correlations to absolute values.}
 }
 \value{
-The function returns a copy of the \code{mea} object which includes a cross-correlation table
+The function returns a copy of the \code{mea} object in which the \code{ccf} and \code{ccfRes} objects are populated. \code{mea$ccf} includes the complete lagged cross-correlation table
+for each window and each lag of S1 and S2 MEA signals. \code{mea$ccfRes} contains various aggregate values, typically used in research:
+\itemize{
+\item lag_zero: a numeric vector containing for each window, the non-lagged cross-correlation value.
+\item all_lags: a numeric vector containing  for each window, the average across all lags.
+\item s1_lead/s2_lead: a numeric vector containing for each window, the average of positive/negative lags, summing up the strenght of S1/S2 in "leading" the synchronization.
+\item s1_lead_0/s2_lead_0: the same as s1_lead/s2_lead, but including lag_zero values in the average.
+\item bestLag: for each window, the lag value (in seconds) that has the highest correlation value.
+\item grandAver: a single numeric value of the grand-average of the whole cross-correlation table.
+\item winTimes: a data frame containing the start and end times of each window in the format hh:mm:ss
+}
 }
 \description{
 This function analyzes a bivariate MEA signal represented by two time-series (subject 1 "s1", subject 2 "s2") resulting from a dyadic interaction.
@@ -31,10 +41,10 @@ lag step, with discrete increments of 1 sample in both directions.
 The choice of \code{lagSec} depends on the type of synchronization expected from the specific interaction. In the literature, lags of ±5 seconds have been reported by multiple authors.
 Function \code{\link{MEAlagplot}} can be used for visual inspection of the appropriateness of the chosen lag.
 
- The choice of \code{winSec} represents the temporal resolution of the analysis.
- The combination of \code{incSec} and \code{winSec} settings has a big impact on the results. These parameters should be chosen carefully, guided by theoretical and empirical considerations.
+The choice of \code{winSec} represents the temporal resolution of the analysis.
+The combination of \code{incSec} and \code{winSec} settings has a big impact on the results. These parameters should be chosen carefully, guided by theoretical and empirical considerations.
 
- If \code{r2Z} is TRUE, values of Fisher's Z are constrained to an upper bound of 10.
+If \code{r2Z} is TRUE, values of Fisher's Z are constrained to an upper bound of 10.
 
 Using absolute values (\code{ABS}) treats positive and negative cross-correlations as equal. The underlying assumption is that both simultaneous movement (positive correlation) and when
 one subject accelerates and the other decelerates (negative correlation), are both signs of interrelatedness and should thus contribute equally to overall synchrony.
@@ -49,6 +59,10 @@ mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
 ## perform ccf analysis
 mea_ccf = MEAccf(mea_normal, lagSec = 5, winSec = 60, incSec = 30, r2Z = TRUE, ABS = TRUE)
 summary(mea_ccf)
+
+##extract ccf values
+res <- getCCF(mea_ccf, type="grandAver")
+print(res)
 
 #visualize the analysis results for the first file
 MEAheatmap(mea_ccf[[1]])

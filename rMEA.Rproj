@@ -16,6 +16,6 @@ AutoAppendNewline: Yes
 StripTrailingWhitespace: Yes
 
 BuildType: Package
-PackageUseDevtools: Yes
+PackagePath: A:/OneDrive - Università degli Studi di Padova/__Synchro Analysis/__RLab/MEA/rMEA development/rMEA
 PackageInstallArgs: --no-multiarch --with-keep.source
 PackageRoxygenize: rd,collate,namespace

@@ -11,7 +11,7 @@ writeMEA(mea, save.directory, what = c("mea", "ccf"), ...)
 
 \item{save.directory}{a character string naming a directory}
 
-\item{what}{a character vector defining what has to be exported. Can be one of 'mea' or 'ccf' Should the (filtered) MEA data be included in the export}
+\item{what}{a character vector defining what has to be exported. Can be one of 'mea' or 'ccf'.}
 
 \item{...}{further arguments passed to \code{\link[utils]{write.table}}}
 }
@@ -19,12 +19,8 @@ writeMEA(mea, save.directory, what = c("mea", "ccf"), ...)
 Exports analyzed MEA data to .txt files
 }
 \details{
-'mea' exports the filtered MEA data. 'ccf' instead exports the cross-correlation matrix together with summarizing statistics.
- Available summarizing statistics are:
- "all_lags": the sum of all lags for each window (row)
- "s1_lead" the sum of negative lags for each window (row)
- "s2_lead" the sum of positive lags for each window (row)
- "bestLag" the maximum correlation value for each window (row)
+'mea' exports the (filtered) MEA data. 'ccf' instead exports the cross-correlation matrix together with all
+summarizing statistics calculated by \code{\link{MEAccf}}.
 }
 \examples{
 \donttest{

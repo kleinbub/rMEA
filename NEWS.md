@@ -1,4 +1,28 @@
-# rMEA
+---
+title: "rMEA NEWS"
+pagetitle: rMEA
+---
+
+### v1.2.0
+#### [2020/07/29] Yearly update to CRAN
+
+  * the package is now compatible with R version 4.0
+  * New function: shuffle_segment(), offering within subject shuffling. This function is included for replication of older studies. shuffle() is still more conservative, and suggested approach to pseudosynchrony.
+  * New function CCFartefacts() to indentify sequences with extremely high correlation, which may require inspection of the videos.
+  * New function: MEAreplace() allows to automatically delete (set to NA) or replace windows of MEA data, based on a data frame created by hand, or with functions like CCFartefacts().
+  
+  
+##### Minor changes
+
+  * various improvements in the documentation
+  * all function now dinamically use ccfResNames.
+  * writeMEA now reports all ccfResNames.
+  * ccfRes now stores as well the 'bestLag' values, and the start and end of the synchronization windows (thanks to anonymous reviewer 2 for the suggestion).
+  * MEAheatmap received a new parameter 'mirror' that offers finer control on the color scale.
+  * shuffle() now allows to specify size = "max", to use all possible combinations.
+  * automatic detection of 'na.rm' arguments in MEAscale FUNs was buggy. So now there is a new argument 'removeNA' which applies na.omit on the data before submitting it to the scaling FUN.
+  * improved the MEAmap use of dots (...), which are now recycled and iterating correctly (when not a function)
+  
 
 ### v1.1.0.9002
   * fixed a bug preventing heatmaps to be plotted with missing data
@@ -9,7 +33,7 @@
   * fixed a bug in MEAdistplot for plotting single groups
 
 ### v1.1.0 
-[2019/03/22] Yearly update to CRAN 
+#### [2019/03/22] Yearly update to CRAN
 
   * included LICENSE file
   * improved fisher's transform performance

@@ -4,18 +4,27 @@
 \alias{MEAheatmap}
 \title{Plot a heatmap of dyadic cross-correlations}
 \usage{
-MEAheatmap(mea, legendSteps = 10, rescale = FALSE,
+MEAheatmap(
+  mea,
+  legendSteps = 10,
+  rescale = FALSE,
   colors = c("#F5FBFF", "#86E89E", "#FFF83F", "#E8A022", "#FF3700"),
-  bias = 1)
+  bias = 1,
+  mirror = TRUE
+)
 }
 \arguments{
 \item{mea}{an object of class \code{MEA} (see function \code{\link{readMEA}}).}
 
 \item{legendSteps}{integer. the number of levels used for the color-coding of the legend.}
 
-\item{rescale}{logical. If True, the color range will represent the minimum and maximum of the data. Otherwise the theoretical correlation range -1 to 1.}
+\item{rescale}{logical. If TRUE, the color range will represent the minimum and maximum of the data. Otherwise the theoretical correlation range -1 to 1.}
 
-\item{colors, bias}{optional arguments passed to \code{\link[grDevices]{colorRampPalette}}.}
+\item{colors}{a vector of colors defining the plot scale.}
+
+\item{bias}{a positive number. Allows to skew the color scale. Values larger than 1 give more widely spaced colors at the high end, and vice versa.}
+
+\item{mirror}{logical. If TRUE, colors are mirrored for negative correlation values. This has effect only if \code{\link{MEAccf}} was run with \code{ABS=FALSE}}
 }
 \description{
 Graphical representation of the lagged cross-correlations in time. Provides an intuitive description of synchronization dynamics.

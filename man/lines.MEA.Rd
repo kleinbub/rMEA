@@ -4,8 +4,7 @@
 \alias{lines.MEA}
 \title{Adds lines of a \code{MEA} object to a Plot}
 \usage{
-\method{lines}{MEA}(x, from = 0, to = NULL, duration = NULL,
-  ccf = F, rescale = F, ...)
+\method{lines}{MEA}(x, from = 0, to = NULL, duration = NULL, ccf = F, rescale = F, ...)
 }
 \arguments{
 \item{x}{an object of class \code{MEA} (see function \code{\link{readMEA}}).}
@@ -16,8 +15,7 @@
 
 \item{duration}{if \code{to} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the amount of seconds to be plotted.}
 
-\item{ccf}{either FALSE or a string representing the type of ccf to be overlayed.
-One of all_lags, "s1_lead", "s2_lead", "lag_zero", "s1_lead_0", "s2_lead_0."}
+\item{ccf}{either FALSE or a string representing the type of ccf to be overlayed. Possible values can be found with the \code{\link{ccfResNames}} function.}
 
 \item{rescale}{logical. Should the motion energy time-series be rescaled?}
 

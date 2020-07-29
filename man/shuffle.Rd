@@ -2,14 +2,14 @@
 % Please edit documentation in R/rMEA_rand.R
 \name{shuffle}
 \alias{shuffle}
-\title{Shuffle MEA data}
+\title{Shuffle MEA data (between dubjects)}
 \usage{
-shuffle(mea, size)
+shuffle(mea, size = "max")
 }
 \arguments{
 \item{mea}{a list of \code{MEA} objects (see function \code{\link{readMEA}}).}
 
-\item{size}{integer. The number of combinations to be returned.}
+\item{size}{either "max" or an integer specifying the number of combinations to be returned.}
 }
 \value{
 an object of class \code{MEAlist} containing randomly combined dyads.

@@ -5,13 +5,13 @@
 # metti i nomi della lista shuffled = uid1 + uid2
 #
 
-#' Shuffle MEA data
+#' Shuffle MEA data (between dubjects)
 #'
 #' This function recombines the s1 and s2 motion energy time-series between all \code{MEA} objects in the supplied list.
 #' It is typically used to compare genuine synchrony of real data with pseudosynchrony of shuffled (recombined) data.
 #'
 #' @param mea a list of \code{MEA} objects (see function \code{\link{readMEA}}).
-#' @param size integer. The number of combinations to be returned.
+#' @param size either "max" or an integer specifying the number of combinations to be returned.
 #'
 #' @details The shuffling process first creates all possible combinations between s1 and s2 of all \code{MEA} objects in the supplied list,
 #' then removes the original pairings, and finally extracts the desired numbers of dyads without replacement.
@@ -34,7 +34,7 @@
 #'summary(mea_rand)
 #' @export
 #'
-shuffle = function(mea, size) {
+shuffle = function(mea, size="max") {
 
   lrfn = MEAlist(mea)
   cat("\r\nShuffling dyads:\r\n")
@@ -54,7 +54,7 @@ shuffle = function(mea, size) {
   #remove real combination
   comborem = unlist(lapply(seq_along(lrfn), function(i){which(combo[1,] == i & combo[2,] == i+length(lrfn))}))
   combo = combo[,-comborem]
-  if (length(combo)/2 <=size) {
+  if (size=="max" || length(combo)/2 <=size) {
     com = data.frame(t(combo))
   } else {
     zamp = sample(1:(length(combo)/2), size=size )
@@ -75,4 +75,81 @@ shuffle = function(mea, size) {
   cat('\r\n',n_boot,"/",length(combo)/2,"possible combinations were randomly selected")
   MEAlist(res)
 
+}
+
+#' Shuffle MEA data (within subjects)
+#'
+#' This function generates fakes dyads to be used for pseudosynchrony calculations following the Ramseyer & Tschacher (2010)
+#' within-subject segment shuffling approach.
+#' Between subjects shuffling \code{\link{shuffle}} is probably more conservative, and suggested for most cases.
+#' This function is provided for replicability of older studies, and can be useful to quickly assess pseudosynchrony in single sessions,
+#' or very small samples.
+#'
+#' @param mea a list of \code{MEA} objects (see function \code{\link{readMEA}}).
+#' @param n_each the number of random dyads to be generated from each real dyad.
+#' @param segSec the width (in seconds) of the shuffling segments.
+#'
+#' @details For each \code{MEA} object, the shuffling procedure first divides s1 and s2 MEA data in segments of size \code{segSec},
+#' then shuffles them within subject (so that the new segments of s1, are the old segments of s1 in a new order). This is repeated
+#' for \code{n_each} times, before getting to the next \code{MEA} object
+#'
+#' Note: all the ccf data, if present, are discarded from the shuffled objects and have to be calculated again using \code{\link{MEAccf}}
+#'
+#' @return an object of class \code{MEAlist} containing \code{n_each * length(mea)} random dyads.
+#' @examples
+#' ## read the first 4 minutes of the normal sample
+#' ##   (intake interviews of patients that carried on therapy)
+#' path_normal <- system.file("extdata/normal", package = "rMEA")
+#' mea_normal <- readMEA(path_normal, sampRate = 25, s1Col = 1, s2Col = 2,
+#'                      s1Name = "Patient", s2Name = "Therapist",
+#'                      idOrder = c("id","session"), idSep="_", skip=1, nrow = 6000)
+#' mea_normal <- setGroup(mea_normal, "normal")
+#'
+#'## Create a shuffled sample
+#'mea_rand = shuffle_segments(mea_normal, n_each=10, segSec=30)
+#'
+#'summary(mea_rand)
+#' @export
+#'
+shuffle_segments = function(mea, n_each, segSec){
+  sr = sampRate(mea)
+  RES = list()
+
+  for(i in 1:n_each) {
+    sink("NUL") #suppress meamap prog
+    res = MEAmap(mea, function(x){
+      #setup
+      seg = sr*segSec
+      nseg = floor(nrow(x)/seg)
+      startx = (seq_len(nseg)-1)*seg +1
+      endx = (seq_len(nseg))*seg
+      #generate random segment order avoiding real matchings
+      ran1 = ran2 = 1:nseg
+      while(sum(ran1 == ran2 )>0){
+      ran1 = sample(ran1)
+      ran2 = sample(ran2)
+      }
+      val1 = val2 = numeric(nrow(x))
+      # str(x)
+      for(i in 1:nseg){
+        # cat("\r\n",startx[i],endx[i], "-->", startx[ran1[i]],endx[ran1[i]])
+        val1[startx[i]:endx[i]] = startx[ran1[i]]:endx[ran1[i]]
+        val2[startx[i]:endx[i]] = startx[ran2[i]]:endx[ran2[i]]
+      }
+      x = x[1:(seg*nseg),]
+      x[[1]] = x[[1]][val1]
+      x[[2]] = x[[2]][val2]
+      x
+    },
+    label="segment shuffle")
+    res = setGroup(res, "shuffled")
+    names(res) = paste0(names(res),"_R",i)
+    sink()
+    RES = c(RES,res)
+    prog(i,n_each)
+  }
+  RES = lapply(RES, function(x){x["ccf"]= list(NULL);x["ccfRes"]= list(NULL);x})
+  RES = MEAlist(RES)
+  RES = RES[sort(names(RES))]
+  RES
 }

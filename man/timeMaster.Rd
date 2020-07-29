@@ -4,8 +4,12 @@
 \alias{timeMaster}
 \title{Transform time values between different formats}
 \usage{
-timeMaster(baseTime, add = 0, out = c("auto", "hour", "min", "sec"),
-  baseSep = "[\\\\.,:,\\\\,',-,\\"]")
+timeMaster(
+  baseTime,
+  add = 0,
+  out = c("auto", "hour", "min", "sec"),
+  baseSep = "[\\\\.,:,\\\\,',-,\\"]"
+)
 }
 \arguments{
 \item{baseTime, add}{either integer of seconds or a time string in the format h:m:s, m:s, or s, with or without leading zeroes}

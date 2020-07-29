@@ -73,6 +73,7 @@ colTrans <- function(col, luminosity=NA, alpha=NA){
 #' @param mea a list of \code{MEA} objects (see function \code{\link{MEAlist}}).
 #' @param contrast either FALSE or a list of \code{MEA} objects to be used as a contrast
 #' @param by.group logical. Should the different groups of \code{mea} be plotted separately?
+#' @param sub.line on which margin line should the 'social presence' subtitle be printed, starting at 0 counting outwards.
 #' @param ... further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[graphics]{plot}}
 #'
 #' @details A typical application of \code{MEAlagplot} is to represent the difference between real dyads and random dyads obtained through a \code{\link{shuffle}} procedure.
@@ -113,7 +114,7 @@ colTrans <- function(col, luminosity=NA, alpha=NA){
 #'}
 #' @export
 #'
-MEAlagplot = function(mea, contrast=F, by.group=T, ...){
+MEAlagplot = function(mea, contrast=F, by.group=T, sub.line=0.5, ...){
   #1 social presence
   # mea = mea3
   # contrast = meaR
@@ -174,7 +175,7 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
   for(k in c("col")){if(length(resPar[[k]])<3) resPar[[k]] = rep(resPar[[k]], length.out=length(groups)+1) }
 
   # print(resPar)
-  do.call(graphics::plot, c(list(x = mean_lags[[1]][[1]]),resPar))
+  do.call(base::plot, c(list(x = mean_lags[[1]][[1]]),resPar))
 
   graphics::axis(side = 1,at = (-lagSec:lagSec)*sampRate, labels = -lagSec:lagSec )
 
@@ -207,7 +208,7 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
     for(g in 1:length(groups)){
       socPres[[groups[g]]] = paste0(groups[g],": ", round(sum(laggers[[g]]>blaggers)/length(ran),2)*100,"%")
     }
-    graphics::mtext(text = paste0("% above ",attr(boot,"groups"),": ", do.call(paste, c(socPres,list(sep=" | ")))) ,3,line = 0.5)
+    graphics::mtext(text = paste0("% above ",attr(boot,"groups"),": ", do.call(paste, c(socPres,list(sep=" | ")))) ,side=3,line = sub.line)
 
   }
 }
@@ -222,6 +223,7 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
 #' @param contrast either FALSE or a list of \code{MEA} objects to be used as a contrast
 #' @param by Either "none", "group", "id", or "session". Defines the grouping to be used.
 #' @param by.group deprecated argument. Use by="group" instead.
+#' @param sub.line on which margin line should the Effect Size subtitle be printed, starting at 0 counting outwards.
 #' @param ... further graphical parameters passed to  \code{\link[graphics]{plot}}
 #'
 #' @details If \code{contrast} is defined, then a normalized difference (Cohen's \emph{d}) between the means of each group and the contrast is provided.
@@ -260,7 +262,7 @@ MEAlagplot = function(mea, contrast=F, by.group=T, ...){
 #'}
 #' @export
 #'
-MEAdistplot = function(mea, contrast=F, by=c("none","group","id","session"), by.group=FALSE, ...) {
+MEAdistplot = function(mea, contrast=FALSE, by=c("none","group","id","session"), by.group=FALSE, sub.line = 0.5, ...) {
   #2 density
   # mea = d
   # contrast = r
@@ -340,7 +342,7 @@ MEAdistplot = function(mea, contrast=F, by=c("none","group","id","session"), by.
     main="Density of MEA average cross-correlations",xlab=paste(attr(mea,"ccf")$filter,"grand average")
   )
   resPar = dotsList(defPar,...)
-  do.call(graphics::plot, resPar)
+  do.call(base::plot, resPar)
   graphics::lines(dboot, col ="gray40", lwd=4,lty=3)
   for(g in 1:length(groups)){
     if(length(dreal[[g]]$x) == 1)
@@ -362,7 +364,7 @@ MEAdistplot = function(mea, contrast=F, by=c("none","group","id","session"), by.
       vsLab = ""
       # vsLab = gsub("(.{100})", "\\1\\\n", vsLab)
     }
-    graphics::mtext(text = vsLab ,3,line = -5.5)
+    graphics::mtext(text = vsLab ,side=3,line = sub.line)
   }
 
 }
@@ -447,7 +449,7 @@ MEAdistplot = function(mea, contrast=F, by=c("none","group","id","session"), by.
 #     main="Density of MEA average cross-correlations",xlab=paste(attr(mea,"ccf")$filter,"grand average")
 #   )
 #   resPar = dotsList(defPar,...)
-#   do.call(graphics::plot, resPar)
+#   do.call(base::plot, resPar)
 #   graphics::lines(dboot, col ="gray40", lwd=4,lty=3)
 #   for(g in 1:length(groups)){
 #     if(length(dreal[[g]]$x) == 1)
@@ -544,7 +546,7 @@ diagnosticPlot = function(mea,width=60,...){
   colz = c("#2E282A","#EF3E36")
   origPar = graphics::par(c("xpd","mar","font"))
   graphics::par(xpd=TRUE,mar=c(3,0.5,2.5,0.5))
-  graphics::plot(s1,type = "l",col=colz[1] ,axes = F, ann=FALSE, lwd = 2,ylim = myYlim,...)
+  base::plot(s1,type = "l",col=colz[1] ,axes = F, ann=FALSE, lwd = 2,ylim = myYlim,...)
   graphics::lines(s2,col=colz[2],lwd = 2)
   graphics::segments(width+10, myYlim[1]-0.1, width +10, myYlim[2])
   graphics::segments(width*2+32, myYlim[1]-0.1, width*2+32, myYlim[2])
@@ -573,7 +575,7 @@ diagnosticPlot = function(mea,width=60,...){
 #' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
 #' One of "sync", "pace", "zero", "lead", "pace0", "lead0".
 #' @param rescale logical. Should the motion energy time-series be rescaled?
- #' @param ... further arguments passed to \code{\link[graphics]{plot}}
+ #' @param ... further arguments passed to \code{\link[base]{plot}}
 #'
 #' @details Note: if more of than 10s of trailing zeroes are found at the end of both s1 and s2 signals they are truncated.
 #' @examples
@@ -664,7 +666,7 @@ plot.MEA = function(x, from = 0, to = NULL, duration = NULL, ccf = F, rescale = 
   # print(resPar)
   #recycle parameters
   for(k in c("lty","lwd","col")){if(length(resPar[[k]])<3) resPar[[k]] = rep(resPar[[k]], length.out=3) }
-  do.call(graphics::plot, resPar)
+  do.call(base::plot, resPar)
   graphics::lines(s1, col=resPar$col[1],lwd = resPar$lwd[1], lty=resPar$lty[1])
   graphics::lines(s2, col=resPar$col[2],lwd = resPar$lwd[2], lty=resPar$lty[2])
   if(!is.null(ccf)){
@@ -699,8 +701,7 @@ plot.MEA = function(x, from = 0, to = NULL, duration = NULL, ccf = F, rescale = 
 #' @param from either an integer or a string in the format hh:mm:ss or mm:ss representing the starting second.
 #' @param to if \code{duration} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the ending second.
 #' @param duration if \code{to} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the amount of seconds to be plotted.
-#' @param ccf either FALSE or a string representing the type of ccf to be overlayed.
-#' One of all_lags, "s1_lead", "s2_lead", "lag_zero", "s1_lead_0", "s2_lead_0."
+#' @param ccf either FALSE or a string representing the type of ccf to be overlayed. Possible values can be found with the \code{\link{ccfResNames}} function.
 #' @param rescale logical. Should the motion energy time-series be rescaled?
 #' @param ... further arguments passed to \code{\link[graphics]{lines}}
 #'
@@ -825,7 +826,7 @@ lines.MEA = function(x, from=0, to = NULL, duration=NULL, ccf=F, rescale =F,... 
 #     for(x in mea){
 #       prog(i,length(mea)); i= i+1
 #       if(to>nrow(x$MEA)) to = nrow(x$MEA)
-#       graphics::plot(x,from=from,to=to, ccf=ccf, rescale = rescale,...)
+#       base::plot(x,from=from,to=to, ccf=ccf, rescale = rescale,...)
 #     }
 #   } else cat("\r\nOperation aborted.")
 # }
@@ -854,15 +855,17 @@ mycolz = function(n,demo=F,alpha=1){
 #'
 #' @param mea an object of class \code{MEA} (see function \code{\link{readMEA}}).
 #' @param legendSteps integer. the number of levels used for the color-coding of the legend.
-#' @param rescale logical. If True, the color range will represent the minimum and maximum of the data. Otherwise the theoretical correlation range -1 to 1.
-#' @param colors,bias optional arguments passed to \code{\link[grDevices]{colorRampPalette}}.
+#' @param rescale logical. If TRUE, the color range will represent the minimum and maximum of the data. Otherwise the theoretical correlation range -1 to 1.
+#' @param colors a vector of colors defining the plot scale.
+#' @param bias a positive number. Allows to skew the color scale. Values larger than 1 give more widely spaced colors at the high end, and vice versa.
+#' @param mirror logical. If TRUE, colors are mirrored for negative correlation values. This has effect only if \code{\link{MEAccf}} was run with \code{ABS=FALSE}
 #'
 #' @details The cross-correlation values are rescaled to be in a range from 0 to 1 before plotting.
 #' @export
 
-MEAheatmap  = function(mea, legendSteps = 10, rescale = FALSE, colors = c("#F5FBFF","#86E89E","#FFF83F","#E8A022","#FF3700"), bias =1){
+MEAheatmap  = function(mea, legendSteps = 10, rescale = FALSE, colors = c("#F5FBFF","#86E89E","#FFF83F","#E8A022","#FF3700"), bias = 1, mirror=TRUE){
   if(!is.MEA(mea) || is.null(mea$ccf)) stop("Only MEA objects with ccf analysis can be plotted by this function.",call.=F)
-  ABS = !any(na.omit(mea$ccf)<0) #do we have negative numbers?
+  ABS = !any(stats::na.omit(mea$ccf)<0) #do we have negative numbers?
   mat = mea$ccf
   if(grep("z",attributes(mea)$ccf$filter)) mat = tanh(mat) #revert fisher's z transform to have -1:1 range
   if(rescale){
@@ -877,8 +880,10 @@ MEAheatmap  = function(mea, legendSteps = 10, rescale = FALSE, colors = c("#F5FB
     colfunc <- grDevices::colorRampPalette(colors=colors, bias=bias)
   }  else {
     bins = seq(-1+2/legendSteps,1, by=2/legendSteps)
-    colfunc <- grDevices::colorRampPalette(colors=c(rev(colors[2:length(colors)]), colors), bias=bias)
+    if(mirror) colfunc <- grDevices::colorRampPalette(colors=c(rev(colors[2:length(colors)]), colors), bias=bias)
+    else colfunc <- grDevices::colorRampPalette(colors=colors, bias=bias)
   }
+
   colz = colfunc(legendSteps)
   colz = c(colz,"#aaaaaa") #colore degli NA
 
@@ -889,7 +894,7 @@ MEAheatmap  = function(mea, legendSteps = 10, rescale = FALSE, colors = c("#F5FB
   myXlim = c(1,plotW+leg_area)
   oldPar = graphics::par("mar")
   graphics::par(mar=c(5, 6, 4, 2) + 0.1)
-  graphics::plot(0,type="n",xlim=myXlim, ylim=myYlim,bty="n",axes=F,xlab="ccf windows",
+  base::plot(0,type="n",xlim=myXlim, ylim=myYlim,bty="n",axes=F,xlab="ccf windows",
        ylab=paste(attr(mea,"s2Name"),"leading    <<< ---   simultaneous  --- >>>    ",attr(mea,"s1Name"),"leading\nseconds"),
        main = paste0("Group: ",attr(mea,"group"),", id: ",attr(mea,"id"),", session: ",attr(mea,"session") ))
   mtext_lab = paste0(attr(mea,"ccf")$filter," with ", attr(mea,"ccf")$win,"s windows and ",attr(mea,"ccf")$inc,"s increments." )

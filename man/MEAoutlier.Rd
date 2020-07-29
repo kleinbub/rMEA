@@ -4,8 +4,12 @@
 \alias{MEAoutlier}
 \title{Replace outliers with given values}
 \usage{
-MEAoutlier(mea, threshold = function(x) {     stats::sd(x) * 10 },
-  direction = c("greater", "less"), replace = NA)
+MEAoutlier(
+  mea,
+  threshold = function(x) {     stats::sd(x) * 10 },
+  direction = c("greater", "less"),
+  replace = NA
+)
 }
 \arguments{
 \item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
@@ -21,9 +25,6 @@ The same \code{mea} object with all extreme values substituted.
 }
 \description{
 Sometimes motion energy analysis generates excessively high peaks resulting from video artifacts or other anomalies in the video source.
-}
-\details{
-This function allows to substitute the values greater or less than a specific threshold. The default threshold is 10 times the standard deviation of the time-series.
 }
 \examples{
 ## read the first 4 minutes of the normal sample

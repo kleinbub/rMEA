@@ -4,9 +4,19 @@
 \alias{readMEA}
 \title{Import MEA raw data}
 \usage{
-readMEA(path, s1Col, s2Col, sampRate, namefilt = NA, s1Name = "s1",
-  s2Name = "s2", idOrder = c("id", "session", "group"), idSep = "_",
-  removeShortFiles = NULL, ...)
+readMEA(
+  path,
+  s1Col,
+  s2Col,
+  sampRate,
+  namefilt = NA,
+  s1Name = "s1",
+  s2Name = "s2",
+  idOrder = c("id", "session", "group"),
+  idSep = "_",
+  removeShortFiles = NULL,
+  ...
+)
 }
 \arguments{
 \item{path}{a character vector of full path names; may point to an individual
