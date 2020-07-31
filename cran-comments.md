@@ -1,10 +1,7 @@
-## Resubmission
-per Dr. Ligges instructions
-reverted license definition in DESCRIPTION
-
 ## Submission description
 This is an update 
-it contains minor fixes and improved usability, documentation and plotting tools.
+The package is now compatible with (and requires) R >= 4.0.0
+This version contains three new functions, various fixes and improved usability and documentation.
 
 ## Test environments
 * local windows 10 pro build

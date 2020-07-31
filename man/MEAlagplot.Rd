@@ -15,7 +15,7 @@ MEAlagplot(mea, contrast = F, by.group = T, sub.line = 0.5, ...)
 
 \item{sub.line}{on which margin line should the 'social presence' subtitle be printed, starting at 0 counting outwards.}
 
-\item{...}{further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[graphics]{plot}}}
+\item{...}{further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[base]{plot}}}
 }
 \description{
 Provides a graphical representation of the comparison between two lists of \code{MEA} objects.
