@@ -7,6 +7,7 @@ This version contains three new functions, various fixes and improved usability 
 * local windows 10 pro build
 * win-builder
 * travis-ci
+* r-hub builder (only windows as the linux server weren't working)
 
 ## R CMD check results
 
