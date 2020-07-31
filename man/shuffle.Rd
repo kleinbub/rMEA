@@ -2,7 +2,7 @@
 % Please edit documentation in R/rMEA_rand.R
 \name{shuffle}
 \alias{shuffle}
-\title{Shuffle MEA data (between dubjects)}
+\title{Shuffle MEA data (between subjects)}
 \usage{
 shuffle(mea, size = "max")
 }

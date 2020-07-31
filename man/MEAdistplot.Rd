@@ -24,7 +24,7 @@ MEAdistplot(
 
 \item{sub.line}{on which margin line should the Effect Size subtitle be printed, starting at 0 counting outwards.}
 
-\item{...}{further graphical parameters passed to  \code{\link[graphics]{plot}}}
+\item{...}{further graphical parameters passed to  \code{\link[base]{plot}}}
 }
 \description{
 Plots the distribution of the average cross-correlations in a list of \code{MEA} objects.

@@ -5,7 +5,7 @@
 # metti i nomi della lista shuffled = uid1 + uid2
 #
 
-#' Shuffle MEA data (between dubjects)
+#' Shuffle MEA data (between subjects)
 #'
 #' This function recombines the s1 and s2 motion energy time-series between all \code{MEA} objects in the supplied list.
 #' It is typically used to compare genuine synchrony of real data with pseudosynchrony of shuffled (recombined) data.

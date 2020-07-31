@@ -6,7 +6,7 @@ This version contains three new functions, various fixes and improved usability 
 ## Test environments
 * local windows 10 pro build
 * win-builder
-* r-hub builder
+* travis-ci
 
 ## R CMD check results
 

@@ -224,7 +224,7 @@ MEAlagplot = function(mea, contrast=F, by.group=T, sub.line=0.5, ...){
 #' @param by Either "none", "group", "id", or "session". Defines the grouping to be used.
 #' @param by.group deprecated argument. Use by="group" instead.
 #' @param sub.line on which margin line should the Effect Size subtitle be printed, starting at 0 counting outwards.
-#' @param ... further graphical parameters passed to  \code{\link[graphics]{plot}}
+#' @param ... further graphical parameters passed to  \code{\link[base]{plot}}
 #'
 #' @details If \code{contrast} is defined, then a normalized difference (Cohen's \emph{d}) between the means of each group and the contrast is provided.
 #' Otherwise, if the \code{mea} object has 3 or less groups, Cohen's \emph{d} will be calculated on the group differences.

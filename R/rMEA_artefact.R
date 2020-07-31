@@ -87,7 +87,7 @@ MEAreplace = function(mea, epochs, replacement, filterLabel = "replaced"){
 #' Detection of potential artefacts in CCF results.
 #'
 #' @description High synchronization values for extended time durations may be the effect of artefacts in the MEA data. For instance subject 2 movement may have
-#' been captured by subject 1's camera (or ROI) as well, or some ambiental characteristic (e.g. light) is changing for both cameras (or ROIs). This function identifies
+#' been captured by subject 1's camera (or ROI) as well, or some environment characteristic (e.g. light) is changing for both cameras (or ROIs). This function identifies
 #' those moments allowing to inspect the original videos with temporal precision.
 #' **Please note that is impossible to discriminate real high synchronization phenomena from artefacts without inspecting the
 #' original videos.**

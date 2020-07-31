@@ -8,14 +8,14 @@ pagetitle: rMEA
 
   * the package is now compatible with R version 4.0
   * New function: shuffle_segment(), offering within subject shuffling. This function is included for replication of older studies. shuffle() is still more conservative, and suggested approach to pseudosynchrony.
-  * New function CCFartefacts() to indentify sequences with extremely high correlation, which may require inspection of the videos.
+  * New function CCFartefacts() to identify sequences with extremely high correlation, which may require inspection of the videos.
   * New function: MEAreplace() allows to automatically delete (set to NA) or replace windows of MEA data, based on a data frame created by hand, or with functions like CCFartefacts().
   
   
 ##### Minor changes
 
   * various improvements in the documentation
-  * all function now dinamically use ccfResNames.
+  * all function now dynamically use ccfResNames.
   * writeMEA now reports all ccfResNames.
   * ccfRes now stores as well the 'bestLag' values, and the start and end of the synchronization windows (thanks to anonymous reviewer 2 for the suggestion).
   * MEAheatmap received a new parameter 'mirror' that offers finer control on the color scale.

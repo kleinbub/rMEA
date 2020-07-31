@@ -25,7 +25,7 @@ for each window and each lag of S1 and S2 MEA signals. \code{mea$ccfRes} contain
 \itemize{
 \item lag_zero: a numeric vector containing for each window, the non-lagged cross-correlation value.
 \item all_lags: a numeric vector containing  for each window, the average across all lags.
-\item s1_lead/s2_lead: a numeric vector containing for each window, the average of positive/negative lags, summing up the strenght of S1/S2 in "leading" the synchronization.
+\item s1_lead/s2_lead: a numeric vector containing for each window, the average of positive/negative lags, summing up the strength of S1/S2 in "leading" the synchronization.
 \item s1_lead_0/s2_lead_0: the same as s1_lead/s2_lead, but including lag_zero values in the average.
 \item bestLag: for each window, the lag value (in seconds) that has the highest correlation value.
 \item grandAver: a single numeric value of the grand-average of the whole cross-correlation table.
