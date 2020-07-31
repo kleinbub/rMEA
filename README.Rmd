@@ -3,7 +3,9 @@ output:
   md_document:
     variant: markdown_github
 ---
-
+  <!-- badges: start -->
+  [![Travis build status](https://travis-ci.com/kleinbub/rMEA.svg?branch=master)](https://travis-ci.com/kleinbub/rMEA)
+  <!-- badges: end -->
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, echo = FALSE}
