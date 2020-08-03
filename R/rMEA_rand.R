@@ -116,7 +116,8 @@ shuffle_segments = function(mea, n_each, segSec){
   RES = list()
 
   for(i in 1:n_each) {
-    sink("NUL") #suppress meamap prog
+    sinkChar = if(.Platform$OS.type=="unix") "/dev/null" else "NUL"
+    sink(sinkChar) #suppress meamap prog
     res = MEAmap(mea, function(x){
       #setup
       seg = sr*segSec
