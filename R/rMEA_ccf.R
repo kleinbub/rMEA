@@ -80,9 +80,11 @@ MEAccf.MEAlist = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T) {
 MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   ####debug
   # mea = mearaw[[1]]
-  # lagSec = 5
-  # winSec = 15
-  # incSec = 15
+  # mea = x[[1]]
+  #
+  # lagSec = 1
+  # winSec = 10
+  # incSec = 10
   # ################
 
   #import C correlation function
@@ -142,18 +144,35 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   timex = data.frame(start=startx, end=endx)
   rownames(timex) = paste0("w",seq_len(n_win))
 
+
   # analytics
-  ccfRes = list(
-    "all_lags" = apply(ccfmat, 1, mean ,na.rm=T),
-    "s1_lead"  = apply(ccfmat[, (lagSec*sampRate+2):(lagSec*sampRate*2+1)], 1, mean ,na.rm=T),
-    "s2_lead"  = apply(ccfmat[, 1:lagSec*sampRate], 1, mean ,na.rm=T),
-    "lag_zero"  = ccfmat[, lagSec*sampRate+1],
-    "s1_lead_0" = apply(ccfmat[, (lagSec*sampRate+1):(lagSec*sampRate*2+1)], 1, mean ,na.rm=T),
-    "s2_lead_0" = apply(ccfmat[, 1:(lagSec*sampRate +1)], 1, mean ,na.rm=T),
-    "bestLag" = apply(ccfmat, 1,  function(r){best = which.max(r); ifelse(length(best)!=0,as.numeric(gsub("lag","", names(best))), NA) }), #this may require a smoothing function
-    "grandAver" = mean(unlist(ccfmat),na.rm=T),
-    "winTimes"  = timex
-  )
+  if(lagSec>0) {
+    ccfRes = list(
+      "all_lags" = apply(ccfmat, 1, mean ,na.rm=T),
+      "s1_lead"  = apply(ccfmat[, (lagSec*sampRate+2):(lagSec*sampRate*2+1)], 1, mean ,na.rm=T),
+      "s2_lead"  = apply(ccfmat[, 1:(lagSec*sampRate)], 1, mean ,na.rm=T),
+      "lag_zero"  = ccfmat[, lagSec*sampRate+1],
+      "s1_lead_0" = apply(ccfmat[, (lagSec*sampRate+1):(lagSec*sampRate*2+1)], 1, mean ,na.rm=T),
+      "s2_lead_0" = apply(ccfmat[, 1:(lagSec*sampRate +1)], 1, mean ,na.rm=T),
+      "bestLag" = apply(ccfmat, 1,  function(r){best = which.max(r); ifelse(length(best)!=0,as.numeric(gsub("lag","", names(best))), NA) }), #this may require a smoothing function
+      "grandAver" = mean(unlist(ccfmat),na.rm=T),
+      "winTimes"  = timex
+    )
+  } else {
+    ccfRes = list(
+      "all_lags" = apply(ccfmat, 1, mean ,na.rm=T),
+      "s1_lead"  = NULL,
+      "s2_lead"  = NULL,
+      "lag_zero"  = ccfmat[, lagSec*sampRate+1],
+      "s1_lead_0" = NULL,
+      "s2_lead_0" = NULL,
+      "bestLag" = apply(ccfmat, 1,  function(r){best = which.max(r); ifelse(length(best)!=0,as.numeric(gsub("lag","", names(best))), NA) }), #this may require a smoothing function
+      "grandAver" = mean(unlist(ccfmat),na.rm=T),
+      "winTimes"  = timex
+    )
+  }
+
+
   names(ccfRes$zero) = names(ccfRes$pace)
 
   filter = "CCF"
