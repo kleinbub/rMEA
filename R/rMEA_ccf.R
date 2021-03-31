@@ -80,11 +80,11 @@ MEAccf.MEAlist = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T) {
 MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   ####debug
   # mea = mearaw[[1]]
-  mea = x[[1]]
-
-  lagSec = 3
-  winSec = 30
-  incSec = 30
+  # mea = x[[1]]
+  #
+  # lagSec = 3
+  # winSec = 30
+  # incSec = 30
   # ################
 
   #import C correlation function
