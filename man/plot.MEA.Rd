@@ -16,7 +16,7 @@
 \item{duration}{if \code{to} is not specified, either an integer or a string in the format hh:mm:ss or mm:ss representing the amount of seconds to be plotted.}
 
 \item{ccf}{either FALSE or a string representing the type of ccf to be overlayed.
-One of "sync", "pace", "zero", "lead", "pace0", "lead0".}
+One of "all_lags"  "s1_lead"   "s2_lead"   "lag_zero"  "s1_lead_0" "s2_lead_0" "bestLag" "grandAver" "winTimes".}
 
 \item{rescale}{logical. Should the motion energy time-series be rescaled?}
 
