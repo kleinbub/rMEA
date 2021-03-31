@@ -2,6 +2,11 @@
 title: "rMEA NEWS"
 pagetitle: rMEA
 ---
+### v1.2.1
+#### [2021/03/31] minor bugfixes
+  
+  * lagSec=0 and lagSec=1 are now supported
+  * documentation update
 
 ### v1.2.0
 #### [2020/07/29] Yearly update to CRAN

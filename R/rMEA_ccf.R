@@ -80,11 +80,11 @@ MEAccf.MEAlist = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T) {
 MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   ####debug
   # mea = mearaw[[1]]
-  # mea = x[[1]]
-  #
-  # lagSec = 1
-  # winSec = 10
-  # incSec = 10
+  mea = x[[1]]
+
+  lagSec = 3
+  winSec = 30
+  incSec = 30
   # ################
 
   #import C correlation function
@@ -107,6 +107,10 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   #if(winSec!=incSec) warning("With overlapping windows, the sync series has to be shifted forward by half window in order to be aligned to the original signal!\r\n")
   iFile = mea$MEA
   n_win = ceiling((nrow(iFile)-win-lagSamp+1)/inc) #calcola il numero di finestre per ciascun file
+  if(n_win == 0){
+    stop("The chosen lagSec, winSec, and incSec combination was too long to find a single full window in session: ", attr(mea,"uid") )
+  }
+
   lcc=lapply(seq_len(n_win)-1, function(iWin)
   { #-----per ciascuna finestra--------
     ab = (iWin*inc +1):(iWin*inc +win+lagSamp) #calcola il range di sample di ciascuna finestra
@@ -171,9 +175,8 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
       "winTimes"  = timex
     )
   }
-
-
   names(ccfRes$zero) = names(ccfRes$pace)
+
 
   filter = "CCF"
   if(r2Z) filter = paste0("z",filter)
@@ -187,6 +190,8 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
                           n_win = n_win)
   mea$ccf = ccfmat
   mea$ccfRes = ccfRes
+
+
 
   #debug
   # cat("\r\n",mea$ccf[1:10,10])
