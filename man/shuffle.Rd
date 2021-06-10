@@ -4,12 +4,15 @@
 \alias{shuffle}
 \title{Shuffle MEA data (between subjects)}
 \usage{
-shuffle(mea, size = "max")
+shuffle(mea, size = "max", keepRoles = FALSE)
 }
 \arguments{
 \item{mea}{a list of \code{MEA} objects (see function \code{\link{readMEA}}).}
 
 \item{size}{either "max" or an integer specifying the number of combinations to be returned.}
+
+\item{keepRoles}{Boolean. If TRUE the resulting random dyad will preserve the roles, i.e. they will all have a new s1 sampled among all
+s1s and a new s2 sampled among all s2s. If FALSE (default), the role will be disregared.}
 }
 \value{
 an object of class \code{MEAlist} containing randomly combined dyads.

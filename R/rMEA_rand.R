@@ -12,6 +12,8 @@
 #'
 #' @param mea a list of \code{MEA} objects (see function \code{\link{readMEA}}).
 #' @param size either "max" or an integer specifying the number of combinations to be returned.
+#' @param keepRoles Boolean. If TRUE the resulting random dyad will preserve the roles, i.e. they will all have a new s1 sampled among all
+#' s1s and a new s2 sampled among all s2s. If FALSE (default), the role will be disregared.
 #'
 #' @details The shuffling process first creates all possible combinations between s1 and s2 of all \code{MEA} objects in the supplied list,
 #' then removes the original pairings, and finally extracts the desired numbers of dyads without replacement.
@@ -34,7 +36,7 @@
 #'summary(mea_rand)
 #' @export
 #'
-shuffle = function(mea, size="max") {
+shuffle = function(mea, size="max", keepRoles=FALSE) {
 
   lrfn = MEAlist(mea)
   cat("\r\nShuffling dyads:\r\n")
@@ -54,6 +56,15 @@ shuffle = function(mea, size="max") {
   #remove real combination
   comborem = unlist(lapply(seq_along(lrfn), function(i){which(combo[1,] == i & combo[2,] == i+length(lrfn))}))
   combo = combo[,-comborem]
+
+  #per request of thekryz on github
+  if(keepRoles){
+    comborem = c(
+                  which(combo[1,] <= length(lrfn) & combo[2,] <= length(lrfn)), #dove s1 <-> s1
+                  which(combo[1,] >= length(lrfn) & combo[2,] >= length(lrfn))
+                )
+    combo = combo[,-comborem]
+  }
   if (size=="max" || length(combo)/2 <=size) {
     com = data.frame(t(combo))
   } else {
