@@ -1,17 +1,13 @@
 ## Update
-## Resubmission
-Fixed NOTE about NUL file on unix platforms (hopefully)
 
-## Submission description
-This is an update 
-The package is now compatible with (and requires) R >= 4.0.0
-This version contains three new functions, various fixes and improved usability and documentation.
+## Description
+* This is an update to v 1.2.2
+* Citation was updated to new format and with a new publication.
+* The function shuffle_segments() has been temporarily disabled waiting for a fix. 
 
 ## Test environments
-* local Debian 10
-* local Windows 10 pro build
+* local Windows 10 pro, R version 4.1.2 (2021-11-01)
 * win-builder
-* travis-ci
 
 ## R CMD check results
 

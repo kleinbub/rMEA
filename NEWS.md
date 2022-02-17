@@ -2,6 +2,12 @@
 title: "rMEA NEWS"
 pagetitle: rMEA
 ---
+
+### v1.2.2
+#### [2022/02/09] 
+  
+  * shuffle_segments() was unreliable. It was disabled until someone fixes it.
+  
 ### v1.2.1
 #### [2021/03/31] minor bugfixes
   

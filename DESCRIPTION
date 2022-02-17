@@ -2,15 +2,15 @@ Package: rMEA
 Type: Package
 Title: Synchrony in Motion Energy Analysis (MEA) Time-Series
 Version: 1.2.2
-Date: 2021-06-10
+Date: 2022-17-02
 Author: Johann R. Kleinbub, Fabian Ramseyer
 Maintainer: Johann R. Kleinbub <johann.kleinbub@gmail.com>
-Description: A suite of tools useful to read, visualize and export bivariate motion energy time-series. Lagged synchrony between subjects can be analyzed through windowed cross-correlation. Surrogate data generation allows an estimation of pseudosynchrony that helps to estimate the effect size of the observed synchronization. Kleinbub, J. R., & Ramseyer, F. T. (2020). rMEA: An R package to assess nonverbal synchronization in motion energy analysis time-series. Psychotherapy research, 1-14. https://doi.org/10.1080/10503307.2020.1844334>.
-URL: https://github.com/kleinbub/rMEA https://www.psync.ch 
+Description: A suite of tools useful to read, visualize and export bivariate motion energy time-series. Lagged synchrony between subjects can be analyzed through windowed cross-correlation. Surrogate data generation allows an estimation of pseudosynchrony that helps to estimate the effect size of the observed synchronization. Kleinbub, J. R., & Ramseyer, F. T. (2020). rMEA: An R package to assess nonverbal synchronization in motion energy analysis time-series. Psychotherapy research, 1-14. <doi:10.1080/10503307.2020.1844334>.
+URL: https://github.com/kleinbub/rMEA https://psync.ch 
 BugReports: https://github.com/kleinbub/rMEA/issues
 Imports: grDevices, graphics, methods, stats, utils
 Depends: R (>= 4.0.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
