@@ -1,7 +1,7 @@
 Package: rMEA
 Type: Package
 Title: Synchrony in Motion Energy Analysis (MEA) Time-Series
-Version: 1.2.2
+Version: 1.2.3
 Date: 2022-02-17
 Author: Johann R. Kleinbub, Fabian Ramseyer
 Maintainer: Johann R. Kleinbub <johann.kleinbub@gmail.com>
@@ -12,4 +12,4 @@ Imports: grDevices, graphics, methods, stats, utils
 Depends: R (>= 4.0.0)
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1

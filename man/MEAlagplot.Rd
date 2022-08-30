@@ -4,7 +4,17 @@
 \alias{MEAlagplot}
 \title{Plots the average cross-correlation at different lags}
 \usage{
-MEAlagplot(mea, contrast = F, by.group = T, sub.line = 0.5, ...)
+MEAlagplot(
+  mea,
+  contrast = F,
+  by.group = T,
+  sub.line = 0.5,
+  mea.lines = TRUE,
+  mea.alpha = 0.8,
+  contrast.lines = TRUE,
+  contrast.alpha = 0.5,
+  ...
+)
 }
 \arguments{
 \item{mea}{a list of \code{MEA} objects (see function \code{\link{MEAlist}}).}
@@ -14,6 +24,14 @@ MEAlagplot(mea, contrast = F, by.group = T, sub.line = 0.5, ...)
 \item{by.group}{logical. Should the different groups of \code{mea} be plotted separately?}
 
 \item{sub.line}{on which margin line should the 'social presence' subtitle be printed, starting at 0 counting outwards.}
+
+\item{mea.lines}{logical. Should individual lines for contrast data be plotted?}
+
+\item{mea.alpha}{numeric from 0 to 1. The value of opacity of individual lines for contrast data}
+
+\item{contrast.lines}{logical. Should individual lines for contrast data be plotted?}
+
+\item{contrast.alpha}{numeric from 0 to 1. The value of opacity of individual lines for contrast data}
 
 \item{...}{further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[base]{plot}}}
 }
@@ -59,5 +77,6 @@ mea_rand = MEAccf(mea_rand, lagSec = 5, winSec = 60, incSec = 30, r2Z = TRUE, AB
 ## Visualize the effects:
 
 MEAlagplot(mea_all, contrast = mea_rand, by.group = TRUE)
+MEAlagplot(mea_all, contrast = mea_rand, by.group = FALSE, col=c(2,4))
 }
 }
