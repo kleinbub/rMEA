@@ -25,13 +25,9 @@ MEAlagplot(
 
 \item{sub.line}{on which margin line should the 'social presence' subtitle be printed, starting at 0 counting outwards.}
 
-\item{mea.lines}{logical. Should individual lines for contrast data be plotted?}
+\item{mea.alpha}{numeric from 0 to 1. The value of opacity of individual lines for the main MEA data. If set to zero, drawing is suppressed to improve performance.}
 
-\item{mea.alpha}{numeric from 0 to 1. The value of opacity of individual lines for contrast data}
-
-\item{contrast.lines}{logical. Should individual lines for contrast data be plotted?}
-
-\item{contrast.alpha}{numeric from 0 to 1. The value of opacity of individual lines for contrast data}
+\item{contrast.alpha}{numeric from 0 to 1. The value of opacity of individual lines for contrast data. If set to zero, drawing is suppressed to improve performance.}
 
 \item{...}{further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[base]{plot}}}
 }

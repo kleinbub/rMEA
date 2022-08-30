@@ -75,10 +75,8 @@ colTrans <- function(col, luminosity=NA, alpha=NA){
 #' @param by.group logical. Should the different groups of \code{mea} be plotted separately?
 #' @param sub.line on which margin line should the 'social presence' subtitle be printed, starting at 0 counting outwards.
 #' @param ... further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[base]{plot}}
-#' @param mea.lines logical. Should individual lines for contrast data be plotted?
-#' @param mea.alpha numeric from 0 to 1. The value of opacity of individual lines for contrast data
-#' @param contrast.lines logical. Should individual lines for contrast data be plotted?
-#' @param contrast.alpha numeric from 0 to 1. The value of opacity of individual lines for contrast data
+#' @param mea.alpha numeric from 0 to 1. The value of opacity of individual lines for the main MEA data. If set to zero, drawing is suppressed to improve performance.
+#' @param contrast.alpha numeric from 0 to 1. The value of opacity of individual lines for contrast data. If set to zero, drawing is suppressed to improve performance.
 #'
 #' @details A typical application of \code{MEAlagplot} is to represent the difference between real dyads and random dyads obtained through a \code{\link{shuffle}} procedure.
 #' It may also be used to see the difference among various filtering procedures or different regions of interest (e.g. head-synchrony versus body-synchrony, female vs. male dyads, etc).
@@ -188,14 +186,14 @@ MEAlagplot = function(mea, contrast=F, by.group=T, sub.line=0.5,
   graphics::axis(side = 1,at = (-lagSec:lagSec)*sampRate, labels = -lagSec:lagSec )
 
   #1. plot bootstrap values
-  if(contrast && contrast.lines) for(i in 1:length(bmean_lags)){
+  if(contrast && contrast.alpha != 0) for(i in 1:length(bmean_lags)){
     graphics::lines(ran,bmean_lags[[i]],col=colTrans(resPar$col[length(groups)+1],1.1,contrast.alpha ),lwd=0.3)  # original: gray70 fuer bootstrapped
     #       graphics::lines(ran,bmean_lags[[i]],col="white",lwd=0.2)   # fuer presence: white fuer boot, so dass nicht sichtbar
   }
   #2 plot values for each group
-  if(groups.lines) for(g in 1:length(groups)){
+  if(mea.alpha != 0) for(g in 1:length(groups)){
     for(i in 1:length(mean_lags[[g]])){
-      graphics::lines(ran,mean_lags[[g]][[i]],col=colTrans(resPar$col[g],1.1,groups.alpha),lwd=0.8)
+      graphics::lines(ran,mean_lags[[g]][[i]],col=colTrans(resPar$col[g],1.1,mea.alpha),lwd=0.8)
       #       graphics::lines(ran,mean_lags[[i]],col="blue",lwd=0.2)
     }
   }
