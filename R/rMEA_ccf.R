@@ -143,8 +143,8 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   if(r2Z) ccfmat = fisher.r2z(ccfmat)
   if(ABS) ccfmat = abs(ccfmat)
 
-  startx = timeMaster((seq_len(n_win)-1) * incSec, out="h")
-  endx   = timeMaster((seq_len(n_win)-1) * incSec + winSec, out="h")
+  startx = timeMaster(round((seq_len(n_win)-1) * incSec), out="h")
+  endx   = timeMaster(round((seq_len(n_win)-1) * incSec + winSec), out="h")
   timex = data.frame(start=startx, end=endx)
   rownames(timex) = paste0("w",seq_len(n_win))
 
