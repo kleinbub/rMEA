@@ -74,9 +74,9 @@ colTrans <- function(col, luminosity=NA, alpha=NA){
 #' @param contrast either FALSE or a list of \code{MEA} objects to be used as a contrast
 #' @param by.group logical. Should the different groups of \code{mea} be plotted separately?
 #' @param sub.line on which margin line should the 'social presence' subtitle be printed, starting at 0 counting outwards.
-#' @param ... further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[base]{plot}}
 #' @param mea.alpha numeric from 0 to 1. The value of opacity of individual lines for the main MEA data. If set to zero, drawing is suppressed to improve performance.
 #' @param contrast.alpha numeric from 0 to 1. The value of opacity of individual lines for contrast data. If set to zero, drawing is suppressed to improve performance.
+#' @param ... further arguments and \code{\link[graphics]{par}} parameters passed to \code{\link[base]{plot}}
 #'
 #' @details A typical application of \code{MEAlagplot} is to represent the difference between real dyads and random dyads obtained through a \code{\link{shuffle}} procedure.
 #' It may also be used to see the difference among various filtering procedures or different regions of interest (e.g. head-synchrony versus body-synchrony, female vs. male dyads, etc).
@@ -118,8 +118,8 @@ colTrans <- function(col, luminosity=NA, alpha=NA){
 #' @export
 #'
 MEAlagplot = function(mea, contrast=F, by.group=T, sub.line=0.5,
-                      mea.lines = TRUE, mea.alpha = 0.8,
-                      contrast.lines = TRUE, contrast.alpha=0.5,
+                     mea.alpha = 0.8,
+                     contrast.alpha=0.5,
                       ...){
   #1 social presence
   # mea = mea3

@@ -6,7 +6,9 @@
 \usage{
 MEAoutlier(
   mea,
-  threshold = function(x) {     stats::sd(x) * 10 },
+  threshold = function(x) {
+     stats::sd(x) * 10
+ },
   direction = c("greater", "less"),
   replace = NA
 )

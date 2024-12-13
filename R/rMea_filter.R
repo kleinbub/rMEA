@@ -199,7 +199,7 @@ MEAoutlier = function(mea, threshold=function(x){stats::sd(x)*10}, direction=c("
 MEAmap = function(mea, FUN, label="", ...){
   UseMethod("MEAmap",mea)
 }
-
+#' @export
 MEAmap.default = function(mea,FUN,label,...){
   if(is.list(mea)){
     mea = MEAlist(mea)
