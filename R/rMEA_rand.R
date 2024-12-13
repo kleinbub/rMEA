@@ -136,46 +136,69 @@ shuffle = function(mea, size="max", keepRoles=FALSE) {
 #' @export
 #'
 shuffle_segments = function(mea, n_each, segSec){
-  message("NOTE: This function was not behaving as expected and has been temporarily disabled until fixed. A similar computation of this algorithm can be found on https://embodiment.ch/research/synchrony-computation.html")
-  # sr = sampRate(mea)
-  # RES = list()
-  #
-  # for(i in 1:n_each) {
-  #   sinkChar = if(.Platform$OS.type=="unix") "/dev/null" else "NUL"
-  #   sink(sinkChar) #suppress meamap prog
-  #   res = MEAmap(mea, function(x){
-  #     #setup
-  #     seg = sr*segSec
-  #     nseg = floor(nrow(x)/seg)
-  #     startx = (seq_len(nseg)-1)*seg +1
-  #     endx = (seq_len(nseg))*seg
-  #     #generate random segment order avoiding real matchings
-  #     ran1 = ran2 = 1:nseg
-  #     while(sum(ran1 == ran2 )>0){
-  #     ran1 = sample(ran1)
-  #     ran2 = sample(ran2)
-  #     }
-  #     val1 = val2 = numeric(nrow(x))
-  #     # str(x)
-  #     for(i in 1:nseg){
-  #       # cat("\r\n",startx[i],endx[i], "-->", startx[ran1[i]],endx[ran1[i]])
-  #       val1[startx[i]:endx[i]] = startx[ran1[i]]:endx[ran1[i]]
-  #       val2[startx[i]:endx[i]] = startx[ran2[i]]:endx[ran2[i]]
-  #     }
-  #     x = x[1:(seg*nseg),]
-  #     x[[1]] = x[[1]][val1]
-  #     x[[2]] = x[[2]][val2]
-  #     x
-  #   },
-  #   label="segment shuffle")
-  #   res = setGroup(res, "shuffled")
-  #   names(res) = paste0(names(res),"_R",i)
-  #   sink()
-  #   RES = c(RES,res)
-  #   prog(i,n_each)
-  # }
-  # RES = lapply(RES, function(x){x["ccf"]= list(NULL);x["ccfRes"]= list(NULL);x})
-  # RES = MEAlist(RES)
-  # RES = RES[sort(names(RES))]
-  # RES
+  message("new version. please carefully check data! DUDE!")
+
+  # Capture sampling rate and filter attribute from the original MEA
+  sr = sampRate(mea)
+  filter_attr = paste(attr(mea, "filter"), "--> within shuffle" ) # Capture the filter attribute
+  RES = list()  # Initialize result list for flattened shuffled MEA objects
+
+  # Loop through each MEA object in `mea`
+  for(j in seq_along(mea)) {
+    # Extract original MEA data, ID, and session for current object
+    x <- mea[[j]]$MEA
+    id <- attr(mea[[j]], "id")  # Retrieve the ID attribute
+    session <- attr(mea[[j]], "session")  # Retrieve the session attribute
+
+    # Perform `n_each` shuffles for the current MEA object
+    for(i in 1:n_each) {
+      # Define a unique identifier for each shuffle using ID and session
+      shuffle_id <- paste0("shuffle_", id, "_session_", session, "_", sprintf("%04d", i))
+
+      # Calculate segment size and number of segments
+      seg = (sr * segSec)
+      nseg = ceiling((nrow(x)-seg+1)/seg)
+      startx = (seq_len(nseg) - 1) * seg + 1
+      endx = seq_len(nseg) * seg
+
+      # Shuffle segment indices independently for s1 and s2
+      ran1 = sample(1:nseg)
+      ran2 = sample(1:nseg)
+
+      # Initialize shuffling index vectors
+      val1 = val2 = numeric(nrow(x))
+      for(k in 1:nseg) {
+        val1[startx[k]:endx[k]] = startx[ran1[k]]:endx[ran1[k]]
+        val2[startx[k]:endx[k]] = startx[ran2[k]]:endx[ran2[k]]
+      }
+      # pad=runif(1,0,nrow(x))
+      # plot(val1,t="l",xlim=c(100,500)+pad,ylim=c(0,1))
+      # abline(v=startx,col=2,lwd=3)
+      # abline(v=endx,col=4  ,lwd=3)
+      # lines(val1,lwd=2 )
+
+      # Apply shuffled indices and trim to segment length
+      x_shuffled = x[1:nrow(x), ]
+      x_shuffled[[1]] = x[[1]][val1]
+      x_shuffled[[2]] = x[[2]][val2]
+
+      # Create a new MEA object with the unique name and filter attribute
+      shuffled_mea = MEA(x_shuffled, sampRate = sr, id = shuffle_id, session = session, group = "shuffled",
+                         s1Name = attr(mea, "s1Name"), s2Name = attr(mea, "s2Name"), filter = filter_attr)
+
+      # Add the shuffled MEA object directly to the flat RES list with unique name
+      RES[[shuffle_id]] <- shuffled_mea
+    }
+  }
+
+  # Apply consistent filter attribute to all MEA objects in RES
+  RES = lapply(RES, function(x) {
+    attr(x, "filter") <- filter_attr
+    if ("ccf" %in% names(x)) x["ccf"] = list(NULL)
+    if ("ccfRes" %in% names(x)) x["ccfRes"] = list(NULL)
+    return(x)
+  })
+
+  cat("Final shuffled list created with", length(RES), "unique shuffled MEA objects.\n")
+  return(RES)
 }
