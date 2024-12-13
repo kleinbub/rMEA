@@ -3,6 +3,20 @@ title: "rMEA NEWS"
 pagetitle: rMEA
 ---
 
+### v1.3.0
+#### [2022/02/09] 
+  * shuffle_segments() reinstated with new code from Fabian.
+  * switched to data.table::fread to improve import performance in readMEA
+  * parallel computation
+    * MEAccf() now uses parallel computation by default
+    * readMEA() can use parallel computation, albeit with short files it does not
+      provide any meaningful advantage (it may even significantly downgrade performance).
+  
+### v1.2.2
+#### [2022/08/30] 
+  
+  * MEAlagPlot mea.line and contrast.line parameters changed to alpha values to have better control.
+
 ### v1.2.2
 #### [2022/02/09] 
   

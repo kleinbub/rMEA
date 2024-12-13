@@ -10,3 +10,4 @@
 ^changelog.*$
 
 ^\.travis\.yml$
+^rMEA readme code.R$
