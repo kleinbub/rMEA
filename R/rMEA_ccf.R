@@ -10,6 +10,7 @@
 #' @param incSec an integer specifying the step size (in seconds) between successive windows. Values lower than \code{winSec} result in overlapping windows.
 #' @param r2Z logical. The default value TRUE applies Fisher's r to Z transformation (inverse hyperbolic tangent function) to all computed correlations.
 #' @param ABS logical. The default value TRUE transforms the (Fisher's Z-transformed) correlations to absolute values.
+#' @param cores Either logical or integer. Sets how many cores should be used for the import. Values of 1, 0 or FALSE disable the multi-core code.
 #'
 #' @details The choice of \code{lagSec} depends on the type of synchronization expected from the specific interaction. In the literature, lags of ±5 seconds have been reported by multiple authors.
 #' Function \code{\link{MEAlagplot}} can be used for visual inspection of the appropriateness of the chosen lag.
@@ -48,36 +49,64 @@
 #' #visualize the analysis results for the first file
 #' MEAheatmap(mea_ccf[[1]])
 #'
-
 #' @export
-MEAccf = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
+MEAccf = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T, cores=TRUE){
   UseMethod("MEAccf",mea)
 }
 #' @export
-MEAccf.default = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
+MEAccf.default = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T, cores=TRUE){
   if(is.list(mea)){
     mea = MEAlist(mea)
-    MEAccf(mea, lagSec, winSec, incSec, r2Z=r2Z, ABS=ABS)
+    MEAccf(mea, lagSec, winSec, incSec, r2Z=r2Z, ABS=ABS, cores=cores)
   } else {
     stop("This function accepts only MEA objects (individual or a list of them). Please use readMEA() to import files")
   }
 }
 
 #' @export
-MEAccf.MEAlist = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T) {
+MEAccf.MEAlist = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T, cores=TRUE) {
   if(any(!sapply(mea, is.MEA)))
     stop("This function accepts only MEA objects (individual or a list of them). Please use readMEA() to import files")
   cat("\r\nComputing CCF:\r\n")
-  res = Map(function(k,i) {
-    prog(i,length(mea))
-    MEAccf(k, lagSec, winSec, incSec, r2Z=r2Z, ABS=ABS)
-    },mea, seq_along(mea) )
+  if(
+    (is.logical(cores) && !isTRUE(cores)) ||
+    (is.numeric(cores) && (identical(cores, 0) || identical(cores, 1))) ||
+    missing(cores)
+    ) {
+    cores = FALSE
+  }
+
+  ##PARELLELIZATION
+  if(cores){
+    if(is.logical(cores))  cores=parallel::detectCores()-1
+    cat(paste0("\r\nPerforming parallelized calculations",
+               " using ",cores," cores.\r\n"))
+
+    cl <- parallel::makeCluster(cores[1])
+    doSNOW::registerDoSNOW(cl)
+    `%dopar%` <- foreach::`%dopar%`
+    `%do%` <- foreach::`%do%`
+    n = length(mea)
+    i=0
+    res <- foreach::foreach(i = seq_along(mea)) %dopar% {
+          MEAccf(mea[i], lagSec, winSec, incSec, r2Z=r2Z, ABS=ABS)
+        }
+    res = do.call(c, res)
+
+  } else {
+    cat("\r\nPerforming single-core calculations")
+    res = Map(function(k,i) {
+      prog(i,length(mea))
+      MEAccf(k, lagSec, winSec, incSec, r2Z=r2Z, ABS=ABS)
+    }, mea, seq_along(mea) )
+  }
+  # print(str(res, max.level=2))
   res = MEAlist(res)
   return(res)
 }
 
 #' @export
-MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
+MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T, cores = NULL){
   ####debug
   # mea = mearaw[[1]]
   # mea = x[[1]]
@@ -86,6 +115,7 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
   # winSec = 30
   # incSec = 30
   # ################
+
 
   #import C correlation function
   C_cor=get("C_cor", asNamespace("stats"))
@@ -111,7 +141,9 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
     stop("The chosen lagSec, winSec, and incSec combination was too long to find a single full window in session: ", attr(mea,"uid") )
   }
 
-  lcc=lapply(seq_len(n_win)-1, function(iWin)
+  lcc = list()
+  for(iWin in seq_len(n_win)-1)
+  # lcc=lapply(seq_len(n_win)-1, function(iWin)
   { #-----per ciascuna finestra--------
     ab = (iWin*inc +1):(iWin*inc +win+lagSamp) #calcola il range di sample di ciascuna finestra
     xWin = iFile[ab,1];yWin = iFile[ab,2] #estrai i dati della finestra in un vettore per sogg x e y
@@ -135,9 +167,9 @@ MEAccf.MEA = function(mea, lagSec, winSec, incSec, r2Z=T, ABS=T){
         res[i] = cor_res
         #################################
       }
-      res
+      lcc[[iWin+1]] = res
     }#fine else
-  }) #fine lapply finestre
+  }#) #fine lapply finestre
   ccfmat = data.frame(matrix(unlist(lcc),ncol=length(ran), byrow = T, dimnames=list(paste0("w",seq_len(n_win)),paste0("lag",ran))))
   colnames(ccfmat) = paste0("lag",ran/sampRate)
   if(r2Z) ccfmat = fisher.r2z(ccfmat)

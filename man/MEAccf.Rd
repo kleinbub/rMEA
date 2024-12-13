@@ -4,7 +4,7 @@
 \alias{MEAccf}
 \title{Moving-windows lagged cross-correlation routine for \code{MEA} objects}
 \usage{
-MEAccf(mea, lagSec, winSec, incSec, r2Z = T, ABS = T)
+MEAccf(mea, lagSec, winSec, incSec, r2Z = T, ABS = T, cores = TRUE)
 }
 \arguments{
 \item{mea}{an object of class \code{MEA} or a list of \code{MEA} objects (see function \code{\link{readMEA}})}
@@ -18,6 +18,8 @@ MEAccf(mea, lagSec, winSec, incSec, r2Z = T, ABS = T)
 \item{r2Z}{logical. The default value TRUE applies Fisher's r to Z transformation (inverse hyperbolic tangent function) to all computed correlations.}
 
 \item{ABS}{logical. The default value TRUE transforms the (Fisher's Z-transformed) correlations to absolute values.}
+
+\item{cores}{Either logical or integer. Sets how many cores should be used for the import. Values of 1, 0 or FALSE disable the multi-core code.}
 }
 \value{
 The function returns a copy of the \code{mea} object in which the \code{ccf} and \code{ccfRes} objects are populated. \code{mea$ccf} includes the complete lagged cross-correlation table

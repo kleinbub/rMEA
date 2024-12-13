@@ -25,6 +25,7 @@
 #' @param removeShortFiles Either NULL or an number ranging from 0 to 1.
 #'  Specifies the proportion of the average file length below which a file should be excluded.
 #'  (E.g. a value of 0.7 will exclude all files with a duration smaller than 70\% of the mean duration of all other files in the directory.)
+#' @param cores Either logical or integer. Sets how many cores should be used for the import. Values of 1, 0 or FALSE disable the multi-core code.
 #' @param ... Additional arguments passed to \code{\link[utils]{read.table}}. E.g. sep, skip, header, etc.
 #'
 #' @details For instance if \code{s1Col = c(1,3)} and \code{s2Col = c(2,4)}, the
@@ -52,7 +53,6 @@
 #'
 #'
 #'
-
 #' @export
 readMEA = function(
   path, s1Col, s2Col, sampRate, namefilt = NA,
@@ -60,6 +60,7 @@ readMEA = function(
   idOrder= c("id","session","group"),
   idSep = "_",
   removeShortFiles = NULL,
+  cores = FALSE,
   ... #additional options passed to read.table (es: skip, header, etc)
 ){
   # ####debug
@@ -76,6 +77,13 @@ readMEA = function(
   # s1Name = "asd";  s2Name = "lol"
   # options=list("skip"=1, "sep"=" ", "header"=F)
 
+  if(
+    (is.logical(cores) && !isTRUE(cores)) ||
+    (is.numeric(cores) && (identical(cores, 0) || identical(cores, 1))) ||
+    missing(cores)
+  ) {
+    cores = FALSE
+  }
   if(length(s1Col)!=length(s2Col)) warning ("s1Col and s2Col have different lengths. Check if this is intended.")
 
   iStep=0
@@ -158,7 +166,38 @@ readMEA = function(
     skipRow = options$skip
     options$skip = NULL
   } else skipRow =rep(0,nFiles)
-  lf <- mapply(function(x,iFile) {  prog(iFile,nFiles); do.call(utils::read.table,c(list(x, skip=skipRow[iFile]), options)) },filenames,seq_along(filenames),SIMPLIFY = F )
+
+  lf = vector(mode="list",length=length(filenames))
+
+  ##PARELLELIZATION
+  if(cores){
+    if(is.logical(cores))  cores=parallel::detectCores()-1
+    cat(paste0("\r\nPerforming parallelized data import ",
+               " using ",cores," cores.\r\n"))
+
+    cl <- parallel::makeCluster(cores[1])
+    doSNOW::registerDoSNOW(cl)
+    `%dopar%` <- foreach::`%dopar%`
+    `%do%` <- foreach::`%do%`
+
+    lf <- foreach::foreach(
+      iFile = seq_along(filenames)) %dopar% {
+        x = filenames[iFile]
+        prog(iFile,nFiles)
+        do.call(data.table::fread, c(list(x, skip=skipRow[iFile], data.table=FALSE), options))
+      }
+
+  } else {
+    for(iFile in seq_along(filenames) ){
+      x = filenames[iFile]
+      prog(iFile,nFiles)
+      r = do.call(data.table::fread, c(list(x, skip=skipRow[iFile], data.table=FALSE), options))
+      lf[[iFile]] = r
+    }
+  }
+
+
+  # lf <- mapply(function(x,iFile) {  prog(iFile,nFiles); do.call(utils::read.table,c(list(x, skip=skipRow[iFile]), options)) },filenames,seq_along(filenames),SIMPLIFY = F )
   if(ncol(lf[[1]])==1) {print(utils::str(lf[[1]]));stop("Import failed. Check 'sep' argument?",call.=F)}
   if(!is.numeric(unlist(lf[[1]][s1Col]))) stop("s1Col column is not numeric. Maybe there is a header? Set 'skip' argument to 1 or more?",call.=F)
   if(!is.numeric(unlist(lf[[1]][s2Col]))) stop("s2Col column is not numeric. Maybe there is a header? Set 'skip' argument to 1 or more?",call.=F)

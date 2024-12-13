@@ -15,6 +15,7 @@ readMEA(
   idOrder = c("id", "session", "group"),
   idSep = "_",
   removeShortFiles = NULL,
+  cores = FALSE,
   ...
 )
 }
@@ -48,6 +49,8 @@ informations.}
 \item{removeShortFiles}{Either NULL or an number ranging from 0 to 1.
 Specifies the proportion of the average file length below which a file should be excluded.
 (E.g. a value of 0.7 will exclude all files with a duration smaller than 70\% of the mean duration of all other files in the directory.)}
+
+\item{cores}{Either logical or integer. Sets how many cores should be used for the import. Values of 1, 0 or FALSE disable the multi-core code.}
 
 \item{...}{Additional arguments passed to \code{\link[utils]{read.table}}. E.g. sep, skip, header, etc.}
 }
