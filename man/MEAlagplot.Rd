@@ -9,7 +9,9 @@ MEAlagplot(
   contrast = F,
   by.group = T,
   sub.line = 0.5,
+  mea.lines = TRUE,
   mea.alpha = 0.8,
+  contrast.lines = TRUE,
   contrast.alpha = 0.5,
   ...
 )

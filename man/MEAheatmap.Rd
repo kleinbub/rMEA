@@ -30,5 +30,5 @@ MEAheatmap(
 Graphical representation of the lagged cross-correlations in time. Provides an intuitive description of synchronization dynamics.
 }
 \details{
-The cross-correlation values are rescaled to be in a range from 0 to 1 before plotting.
+The cross-correlation values are rescaled to be in a range from 0 to 1 before plotting. Fisher's z transform is reverted before rescaling.
 }

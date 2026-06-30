@@ -118,8 +118,8 @@ colTrans <- function(col, luminosity=NA, alpha=NA){
 #' @export
 #'
 MEAlagplot = function(mea, contrast=F, by.group=T, sub.line=0.5,
-                     mea.alpha = 0.8,
-                     contrast.alpha=0.5,
+                      mea.lines = TRUE, mea.alpha = 0.8,
+                      contrast.lines = TRUE, contrast.alpha=0.5,
                       ...){
   #1 social presence
   # mea = mea3
@@ -866,14 +866,14 @@ mycolz = function(n,demo=F,alpha=1){
 #' @param bias a positive number. Allows to skew the color scale. Values larger than 1 give more widely spaced colors at the high end, and vice versa.
 #' @param mirror logical. If TRUE, colors are mirrored for negative correlation values. This has effect only if \code{\link{MEAccf}} was run with \code{ABS=FALSE}
 #'
-#' @details The cross-correlation values are rescaled to be in a range from 0 to 1 before plotting.
+#' @details The cross-correlation values are rescaled to be in a range from 0 to 1 before plotting. Fisher's z transform is reverted before rescaling.
 #' @export
 
 MEAheatmap  = function(mea, legendSteps = 10, rescale = FALSE, colors = c("#F5FBFF","#86E89E","#FFF83F","#E8A022","#FF3700"), bias = 1, mirror=TRUE){
   if(!is.MEA(mea) || is.null(mea$ccf)) stop("Only MEA objects with ccf analysis can be plotted by this function.",call.=F)
   ABS = !any(stats::na.omit(mea$ccf)<0) #do we have negative numbers?
   mat = mea$ccf
-  if(grep("z",attributes(mea)$ccf$filter)) mat = tanh(mat) #revert fisher's z transform to have -1:1 range
+  if(grepl("z",attributes(mea)$ccf$filter)) mat = tanh(mat) #revert fisher's z transform to have -1:1 range
   if(rescale){
     if(ABS) mat = rangeRescale(mat, 0,1)
     else    mat = rangeRescale(mat,-1,1)
